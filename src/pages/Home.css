@@ -1,0 +1,14 @@
+ion-button {
+  text-align: center;
+  justify-content: center;
+  margin: 30% 10% 0 10%;
+  width: 100%;
+}
+
+ion-toolbar {
+  text-align: center;
+}
+
+ion-grid {
+  max-width: 500px;
+}

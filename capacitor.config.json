@@ -1,6 +1,6 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "myApp",
+  "appName": "Turtle",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",
