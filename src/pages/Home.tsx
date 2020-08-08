@@ -1,7 +1,7 @@
 import { IonButton, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { db, timestamp } from '../services/firebase';
+import { db, timestamp, auth, rtdb } from '../services/firebase';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -10,20 +10,32 @@ const Home: React.FC = () => {
 
   let history = useHistory();
 
-  const handleClick = async () => {
+  // Populate both Firestore and RealTimeDB before navigating to room
+  const createRoom = async () => {
     const roomId = await db.collection('rooms').add({
       createdAt: timestamp,
       ownerId: userId,
     });
 
+    await rtdb.ref('/rooms/' + roomId.id).set({ [userId]: 'placeholder', exists: true });
     const path = '/room/' + roomId.id;
     return history.push(path);
   };
 
+  // Sign in anonymously before showing Create Room button
   useEffect(() => {
-    console.log('Hook fired');
-    setUserId('placeholder');
-    setLoading(false);
+    const authUnsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+        setLoading(false);
+      } else {
+        auth.signInAnonymously();
+      }
+    });
+
+    return () => {
+      authUnsubscribe();
+    };
   }, []);
 
   return (
@@ -39,7 +51,7 @@ const Home: React.FC = () => {
             {loading ? (
               <IonContent className="ion-padding">Loading...</IonContent>
             ) : (
-              <IonButton onClick={handleClick}>Create Room</IonButton>
+              <IonButton onClick={createRoom}>Create Room</IonButton>
             )}
           </IonRow>
         </IonGrid>
