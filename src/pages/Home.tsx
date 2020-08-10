@@ -17,7 +17,7 @@ const Home: React.FC = () => {
       ownerId: userId,
     });
 
-    await rtdb.ref('/rooms/' + roomId.id).set({ [userId]: 'placeholder', exists: true });
+    await rtdb.ref('/rooms/' + roomId.id).set({ userCount: 0 });
     const path = '/room/' + roomId.id;
     return history.push(path);
   };
