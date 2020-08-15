@@ -15,6 +15,11 @@ const collection = {
       },
     },
   },
+  users: {
+    userId: {
+      name: 'Anonymous',
+    },
+  },
 };
 
 // Realtime Database - needed for tracking user presence

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { db, timestamp, auth, rtdb } from '../services/firebase';
 import './Home.css';
+import { generateAnonName } from '../services/random';
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -25,12 +26,15 @@ const Home: React.FC = () => {
 
   // Sign in anonymously before showing Create Room button
   useEffect(() => {
-    const authUnsubscribe = auth.onAuthStateChanged((user) => {
+    const authUnsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setUserId(user.uid);
         setLoading(false);
       } else {
-        auth.signInAnonymously();
+        const credential = await auth.signInAnonymously();
+        await db.collection('users').doc(credential.user?.uid).set({
+          name: generateAnonName(),
+        });
       }
     });
 

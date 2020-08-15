@@ -1,8 +1,9 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router';
-import { auth, db, rtdb, increment, decrement } from '../services/firebase';
 import Chat from '../components/Chat';
+import { auth, db, decrement, increment, rtdb } from '../services/firebase';
+import { generateAnonName } from '../services/random';
 
 const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const history = useHistory();
@@ -30,11 +31,14 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
 
   // Handle logging in
   useEffect(() => {
-    const authUnsubscribe = auth.onAuthStateChanged((user) => {
+    const authUnsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setUserId(user.uid);
       } else {
-        auth.signInAnonymously();
+        const credential = await auth.signInAnonymously();
+        await db.collection('users').doc(credential.user?.uid).set({
+          name: generateAnonName(),
+        });
       }
     });
 
@@ -43,13 +47,14 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
     };
   }, []);
 
-  // Keep track of online user presence in realtime database rooms
+  // Subscribe listeners
   useEffect(() => {
     if (!didConnect && userId !== '' && validRoom) {
       const populateRoom = () => {
         const roomRef = rtdb.ref('/rooms/' + roomId);
         const availableRef = rtdb.ref('/available/');
 
+        // Keep track of online user presence in realtime database rooms
         roomRef.on('value', async (snapshot) => {
           if (!snapshot.hasChild(userId)) {
             // Keep userId in the room as long as a connection from the client exists
