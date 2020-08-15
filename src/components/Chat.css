@@ -1,0 +1,42 @@
+ion-grid {
+  border-left: solid 1px #bbb;
+  border-right: solid 1px #bbb;
+  height: 100%;
+}
+
+ion-col {
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  white-space: pre-wrap;
+  max-width: 75%;
+}
+
+ion-textarea {
+  border: solid 1px #999;
+}
+
+.right-align {
+  justify-content: flex-end;
+}
+
+.my-msg {
+  text-align: right;
+  background: var(--ion-color-primary);
+  color: #fff;
+}
+
+.other-msg {
+  background: var(--ion-color-secondary);
+  color: #fff;
+}
+
+.send-msg {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.send-button {
+  width: 100%;
+}

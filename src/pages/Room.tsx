@@ -2,6 +2,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/rea
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router';
 import { auth, db, rtdb, increment, decrement } from '../services/firebase';
+import Chat from '../components/Chat';
 
 const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const history = useHistory();
@@ -46,29 +47,43 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   useEffect(() => {
     if (!didConnect && userId !== '' && validRoom) {
       const populateRoom = () => {
-        const ref = rtdb.ref('/rooms/' + roomId);
+        const roomRef = rtdb.ref('/rooms/' + roomId);
+        const availableRef = rtdb.ref('/available/');
 
-        ref.on('value', async (snapshot) => {
+        roomRef.on('value', async (snapshot) => {
           if (!snapshot.hasChild(userId)) {
             // Keep userId in the room as long as a connection from the client exists
-            await ref.child(userId).set({ name: 'placeholder' });
-            await ref.update({ userCount: increment });
+            await roomRef.child(userId).set({ name: 'placeholder' });
+            await roomRef.update({ userCount: increment });
           }
         });
 
-        ref.child('userCount').on('value', (snapshot) => {
+        roomRef.child('userCount').on('value', (snapshot) => {
           setUserCount(snapshot.val());
         });
 
+        // Re-add room into /available/ if the room was deleted
+        availableRef.on('child_removed', async (snapshot) => {
+          if (!snapshot.hasChild(roomId)) {
+            await availableRef.child(roomId).set({
+              name: 'Room Name',
+              createdAt: new Date().toISOString(),
+            });
+          }
+        });
+
         setLoading(false); // Ready when connection to rtdb is made
+
+        // Unsubscribe listeners
         return () => {
-          ref.off('value');
-          ref.child('userCount').off('value');
+          roomRef.off('value');
+          roomRef.child('userCount').off('value');
+          availableRef.off('child_removed');
         };
       };
 
       populateRoom();
-      setDidConnect(true); // Run this effect only once
+      setDidConnect(true); // Run this useEffect only once
     }
   }, [userId, validRoom, roomId, userCount, loading, didConnect]);
 
@@ -78,6 +93,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
       const depopulateRoom = async () => {
         const refUser = rtdb.ref('/rooms/' + roomId + '/' + userId);
         const refRoom = rtdb.ref('/rooms/' + roomId);
+        const refAvailable = rtdb.ref('/available/' + roomId);
 
         // Always remove user from room on disconnect
         await refRoom.onDisconnect().update({ userCount: decrement });
@@ -87,9 +103,11 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         console.log('userCount: ' + userCount);
         if (userCount <= 1) {
           await refRoom.onDisconnect().remove();
+          await refAvailable.onDisconnect().remove();
         } else {
-          await refRoom.onDisconnect().cancel(); // Cancels all disconnect actions
-          await refRoom.onDisconnect().update({ userCount: decrement });
+          await refRoom.onDisconnect().cancel(); // Cancels all disconnect actions at and under refRoom
+          await refAvailable.onDisconnect().cancel();
+          await refRoom.onDisconnect().update({ userCount: decrement }); // User disconnect still needs to be handled
           await refUser.onDisconnect().remove();
         }
       };
@@ -105,11 +123,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
           <IonTitle>Turtle</IonTitle>
         </IonToolbar>
       </IonHeader>
-      {loading ? (
-        <IonContent className="ion-padding">Loading...</IonContent>
-      ) : (
-        <IonContent className="ion-padding">Video and chat</IonContent>
-      )}
+      {loading ? <IonContent className="ion-padding">Loading...</IonContent> : <Chat></Chat>}
     </IonPage>
   );
 };

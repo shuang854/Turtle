@@ -18,6 +18,7 @@ const Home: React.FC = () => {
     });
 
     await rtdb.ref('/rooms/' + roomId.id).set({ userCount: 0 });
+    await rtdb.ref('/available/' + roomId.id).set({ name: 'Room Name', createdAt: new Date().toISOString() });
     const path = '/room/' + roomId.id;
     return history.push(path);
   };
@@ -51,7 +52,9 @@ const Home: React.FC = () => {
             {loading ? (
               <IonContent className="ion-padding">Loading...</IonContent>
             ) : (
-              <IonButton onClick={createRoom}>Create Room</IonButton>
+              <IonButton onClick={createRoom} class="create-room">
+                Create Room
+              </IonButton>
             )}
           </IonRow>
         </IonGrid>
