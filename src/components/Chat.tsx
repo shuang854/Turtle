@@ -1,8 +1,25 @@
 import { IonButton, IonCol, IonContent, IonFooter, IonGrid, IonRow, IonTextarea } from '@ionic/react';
-import React from 'react';
+import React, { useState } from 'react';
+import { db, timestamp } from '../services/firebase';
 import './Chat.css';
 
-const Chat: React.FC = () => {
+type ChatProps = {
+  roomId: string;
+  userId: string;
+};
+
+const Chat: React.FC<ChatProps> = ({ roomId, userId }) => {
+  const [message, setMessage] = useState('');
+
+  const sendMessage = async () => {
+    const messageId = await db.collection('rooms').doc(roomId).collection('messages').add({
+      createdAt: timestamp,
+      senderId: userId,
+      content: message,
+    });
+    console.log(messageId);
+  };
+
   return (
     <>
       <IonContent>
@@ -37,10 +54,10 @@ const Chat: React.FC = () => {
         <IonGrid>
           <IonRow>
             <IonCol size="9">
-              <IonTextarea></IonTextarea>
+              <IonTextarea onIonChange={(e) => setMessage(e.detail.value!)}></IonTextarea>
             </IonCol>
             <IonCol size="3" class="send-msg">
-              <IonButton expand="block" color="primary" class="send-button">
+              <IonButton expand="block" color="primary" onClick={sendMessage} class="send-button">
                 Send
               </IonButton>
             </IonCol>

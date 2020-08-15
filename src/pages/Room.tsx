@@ -100,7 +100,6 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         await refUser.onDisconnect().remove();
 
         // Remove the room if the leaving user is the last in the room
-        console.log('userCount: ' + userCount);
         if (userCount <= 1) {
           await refRoom.onDisconnect().remove();
           await refAvailable.onDisconnect().remove();
@@ -123,7 +122,11 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
           <IonTitle>Turtle</IonTitle>
         </IonToolbar>
       </IonHeader>
-      {loading ? <IonContent className="ion-padding">Loading...</IonContent> : <Chat></Chat>}
+      {loading ? (
+        <IonContent className="ion-padding">Loading...</IonContent>
+      ) : (
+        <Chat roomId={roomId} userId={userId}></Chat>
+      )}
     </IonPage>
   );
 };

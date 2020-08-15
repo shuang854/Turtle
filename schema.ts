@@ -6,6 +6,13 @@ const collection = {
     roomId: {
       createdAt: 'timestamp',
       ownerId: 'userId',
+      messages: {
+        messageId: {
+          createdAt: 'timestamp',
+          senderId: 'userId',
+          content: 'Message content',
+        },
+      },
     },
   },
 };
