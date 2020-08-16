@@ -13,7 +13,6 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
-  const [didConnect, setDidConnect] = useState(false);
 
   // Verify that the roomId exists in db
   useEffect(() => {
@@ -49,7 +48,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
 
   // Subscribe listeners
   useEffect(() => {
-    if (!didConnect && userId !== '' && validRoom) {
+    if (userId !== '' && validRoom) {
       const populateRoom = () => {
         const roomRef = rtdb.ref('/rooms/' + roomId);
         const availableRef = rtdb.ref('/available/');
@@ -68,7 +67,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         });
 
         // Re-add room into /available/ if the room was deleted
-        availableRef.on('child_removed', async (snapshot) => {
+        availableRef.on('value', async (snapshot) => {
           if (!snapshot.hasChild(roomId)) {
             await availableRef.child(roomId).set({
               name: 'Room Name',
@@ -77,7 +76,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
           }
         });
 
-        setLoading(false); // Ready when connection to rtdb is made
+        setLoading(false); // Ready when connections to databases are made
 
         // Unsubscribe listeners
         return () => {
@@ -87,10 +86,13 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         };
       };
 
-      populateRoom();
-      setDidConnect(true); // Run this useEffect only once
+      const unsub = populateRoom();
+
+      return () => {
+        unsub();
+      };
     }
-  }, [userId, validRoom, roomId, userCount, loading, didConnect]);
+  }, [userId, validRoom, roomId]);
 
   // Handle disconnect events
   useEffect(() => {
