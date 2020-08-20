@@ -1,4 +1,4 @@
-import { IonButton, IonCol, IonContent, IonFooter, IonGrid, IonRow, IonTextarea } from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonCol, IonGrid, IonRow, IonTextarea } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { currTime, db, timestamp } from '../services/firebase';
 import './Chat.css';
@@ -80,8 +80,8 @@ const Chat: React.FC<ChatProps> = ({ roomId, userId }) => {
   };
 
   return (
-    <>
-      <IonContent>
+    <IonCard class="chat-card">
+      <IonCardContent class="message-card">
         <IonGrid class="message-grid">
           {!loading ? (
             chats.map((chat) => {
@@ -98,12 +98,16 @@ const Chat: React.FC<ChatProps> = ({ roomId, userId }) => {
             <></>
           )}
         </IonGrid>
-      </IonContent>
-      <IonFooter class="ion-no-border">
+      </IonCardContent>
+      <IonCardContent class="input-card">
         <IonGrid class="message-input">
           <IonRow>
             <IonCol size="9">
-              <IonTextarea onIonChange={(e) => setMessage(e.detail.value!)} value={message}></IonTextarea>
+              <IonTextarea
+                onIonChange={(e) => setMessage(e.detail.value!)}
+                value={message}
+                class="textarea"
+              ></IonTextarea>
             </IonCol>
             <IonCol size="3" class="send-msg">
               <IonButton expand="block" color="primary" onClick={sendMessage} class="send-button">
@@ -112,8 +116,8 @@ const Chat: React.FC<ChatProps> = ({ roomId, userId }) => {
             </IonCol>
           </IonRow>
         </IonGrid>
-      </IonFooter>
-    </>
+      </IonCardContent>
+    </IonCard>
   );
 };
 

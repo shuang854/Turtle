@@ -5,10 +5,10 @@
   width: 100%;
 }
 
-ion-toolbar {
-  text-align: center;
+.home-grid {
+  max-width: 500px;
 }
 
-ion-grid {
-  max-width: 500px;
+ion-toolbar {
+  text-align: center;
 }

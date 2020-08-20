@@ -1,28 +1,47 @@
 ion-col {
-  padding: 10px;
-  border-radius: 10px;
+  padding: 6px;
+  border-radius: 5px;
   margin-bottom: 4px;
   white-space: pre-wrap;
-  max-width: 75%;
+  max-width: 70%;
 }
 
 ion-textarea {
   border: solid 1px #999;
 }
 
+.chat-card {
+  height: 100%;
+  width: 100%;
+  float: right;
+  margin: 0;
+}
+
 .right-align {
   justify-content: flex-end;
 }
 
+.message-card {
+  overflow-y: auto;
+  height: calc(100% - 125px);
+  padding: 0;
+}
+
+.input-card {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  padding: 0;
+}
+
 .message-grid {
-  padding-left: calc(100vw - 100%);
   margin-right: 0;
   height: 100%;
 }
 
 .message-input {
-  margin-right: 0;
-  border: solid 1px #bbb;
+  margin: 0;
+  border-top: solid 1px #bbb;
 }
 
 .my-msg {
@@ -44,4 +63,8 @@ ion-textarea {
 
 .send-button {
   width: 100%;
+}
+
+.text-area {
+  height: 100%;
 }

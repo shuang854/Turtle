@@ -1,0 +1,14 @@
+.room-grid {
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  height: 100%;
+  padding: 0;
+}
+
+.room-row {
+  height: 100%;
+}
+
+.player-col {
+  height: 70%;
+}

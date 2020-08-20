@@ -1,9 +1,11 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonCol, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
+import ReactPlayer from 'react-player';
 import { RouteComponentProps, useHistory } from 'react-router';
 import Chat from '../components/Chat';
 import { auth, db, decrement, increment, rtdb } from '../services/firebase';
 import { generateAnonName } from '../services/random';
+import './Room.css';
 
 const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const history = useHistory();
@@ -132,7 +134,21 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
       {loading ? (
         <IonContent className="ion-padding">Loading...</IonContent>
       ) : (
-        <Chat roomId={roomId} userId={userId}></Chat>
+        <IonGrid class="room-grid">
+          <IonRow class="room-row">
+            <IonCol size="12" sizeLg="9">
+              <ReactPlayer
+                className="react-player"
+                url="https://www.youtube.com/watch?v=ysz5S6PUM-U"
+                width="100%"
+                height="100%"
+              ></ReactPlayer>
+            </IonCol>
+            <IonCol size="12" sizeLg="3">
+              <Chat roomId={roomId} userId={userId}></Chat>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
       )}
     </IonPage>
   );
