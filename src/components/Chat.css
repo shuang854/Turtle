@@ -45,7 +45,6 @@ ion-textarea {
 }
 
 .my-msg {
-  text-align: right;
   background: var(--ion-color-primary);
   color: #fff;
 }

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { db, timestamp, auth, rtdb } from '../services/firebase';
 import './Home.css';
-import { generateAnonName } from '../services/random';
+import { generateAnonName } from '../services/utilities';
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);

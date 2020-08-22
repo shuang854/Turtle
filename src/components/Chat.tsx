@@ -68,14 +68,16 @@ const Chat: React.FC<ChatProps> = ({ roomId, userId }) => {
     }
   }, [prevMessages, newMessages, chats]);
 
-  // Send message to database and reset textarea field
+  // Send message to database
   const sendMessage = async () => {
     await db.collection('rooms').doc(roomId).collection('messages').add({
       createdAt: timestamp,
       senderId: userId,
       content: message,
+      type: 'user',
     });
 
+    // Reset textarea field
     setMessage('');
   };
 

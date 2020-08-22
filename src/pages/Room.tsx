@@ -1,10 +1,10 @@
 import { IonCol, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ReactPlayer from 'react-player';
 import { RouteComponentProps, useHistory } from 'react-router';
 import Chat from '../components/Chat';
-import { auth, db, decrement, increment, rtdb } from '../services/firebase';
-import { generateAnonName } from '../services/random';
+import { auth, db, decrement, increment, rtdb, timestamp } from '../services/firebase';
+import { generateAnonName, secondsToTimestamp, timestampToSeconds } from '../services/utilities';
 import './Room.css';
 
 const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
@@ -13,8 +13,11 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
 
   const [validRoom, setValidRoom] = useState(false);
   const [userId, setUserId] = useState('');
+  const [ownerId, setOwnerId] = useState('');
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const player = useRef<ReactPlayer>(null);
 
   // Verify that the roomId exists in db
   useEffect(() => {
@@ -24,6 +27,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         history.push('/');
       } else {
         setValidRoom(true);
+        setOwnerId(room.data()?.ownerId);
       }
     };
 
@@ -124,6 +128,77 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
     }
   }, [userId, validRoom, roomId, loading, userCount]);
 
+  // Send video playing message to database when owner plays video
+  const onPlay = async () => {
+    if (ownerId === userId) {
+      const currTime = player?.current?.getCurrentTime();
+      if (currTime !== undefined) {
+        await db
+          .collection('rooms')
+          .doc(roomId)
+          .collection('messages')
+          .add({
+            createdAt: timestamp,
+            senderId: userId,
+            content: 'started playing the video from ' + secondsToTimestamp(currTime),
+            type: 'play',
+          });
+      }
+    }
+  };
+
+  const onPause = async () => {
+    if (ownerId === userId) {
+      const currTime = player?.current?.getCurrentTime();
+      if (currTime !== undefined) {
+        await db
+          .collection('rooms')
+          .doc(roomId)
+          .collection('messages')
+          .add({
+            createdAt: timestamp,
+            senderId: userId,
+            content: 'paused the video at ' + secondsToTimestamp(currTime),
+            type: 'pause',
+          });
+      }
+    }
+  };
+
+  // Listen for video interactions
+  useEffect(() => {
+    if (!loading) {
+      const videoUnsubscribe = db
+        .collection('rooms')
+        .doc(roomId)
+        .collection('messages')
+        .where('type', 'in', ['play', 'pause'])
+        .onSnapshot((querySnapshot) => {
+          const changes = querySnapshot.docChanges();
+          const change = changes[changes.length - 1];
+          if (change?.type === 'added') {
+            const data = change.doc.data();
+            if (userId !== data.senderId) {
+              // Match video timestamp of received message
+              const arr = data.content.split(' ');
+              const timestamp = arr[arr.length - 1];
+              player.current?.seekTo(timestampToSeconds(timestamp));
+
+              if (data.type === 'play') {
+                setPlaying(true);
+              } else {
+                setPlaying(false);
+              }
+            }
+          }
+        });
+
+      return () => {
+        videoUnsubscribe();
+      };
+    }
+  }, [loading, roomId, userId]);
+
   return (
     <IonPage>
       <IonHeader>
@@ -137,7 +212,17 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         <IonGrid class="room-grid">
           <IonRow class="room-row">
             <IonCol size="12" sizeLg="9" class="player-col">
-              <ReactPlayer url="https://www.youtube.com/watch?v=ysz5S6PUM-U" width="100%" height="100%"></ReactPlayer>
+              <ReactPlayer
+                ref={player}
+                url="https://www.youtube.com/watch?v=ysz5S6PUM-U"
+                width="100%"
+                height="100%"
+                controls={true}
+                onPlay={onPlay}
+                onPause={onPause}
+                playing={playing}
+                muted={true}
+              ></ReactPlayer>
             </IonCol>
             <IonCol size="12" sizeLg="3" class="chat-col">
               <Chat roomId={roomId} userId={userId}></Chat>
