@@ -136,15 +136,10 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
       ) : (
         <IonGrid class="room-grid">
           <IonRow class="room-row">
-            <IonCol size="12" sizeLg="9">
-              <ReactPlayer
-                className="react-player"
-                url="https://www.youtube.com/watch?v=ysz5S6PUM-U"
-                width="100%"
-                height="100%"
-              ></ReactPlayer>
+            <IonCol size="12" sizeLg="9" class="player-col">
+              <ReactPlayer url="https://www.youtube.com/watch?v=ysz5S6PUM-U" width="100%" height="100%"></ReactPlayer>
             </IonCol>
-            <IonCol size="12" sizeLg="3">
+            <IonCol size="12" sizeLg="3" class="chat-col">
               <Chat roomId={roomId} userId={userId}></Chat>
             </IonCol>
           </IonRow>

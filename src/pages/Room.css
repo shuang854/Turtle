@@ -5,10 +5,29 @@
   padding: 0;
 }
 
+@media (min-width: 992px) {
+  .player-col {
+    height: calc(0.5625 * 75vw);
+    position: relative;
+  }
+}
+
+@media (max-width: 992px) {
+  .player-col {
+    height: 35%;
+  }
+}
+
 .room-row {
   height: 100%;
 }
 
-.player-col {
-  height: 70%;
+.chat-col {
+  padding: 0;
+}
+
+@media (max-width: 992px) {
+  .chat-col {
+    height: 65%;
+  }
 }

@@ -51,7 +51,7 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonGrid>
+        <IonGrid class="home-grid">
           <IonRow>
             {loading ? (
               <IonContent className="ion-padding">Loading...</IonContent>
