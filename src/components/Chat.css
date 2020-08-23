@@ -27,21 +27,23 @@ ion-textarea {
   padding: 0;
 }
 
-.input-card {
-  position: absolute;
-  bottom: 0px;
+.input-card-row {
+  position: fixed;
   width: 100%;
+}
+
+.input-card-col {
+  margin: 0;
+  border-top: solid 1px #999;
+}
+
+.input-card-content {
   padding: 0;
 }
 
 .message-grid {
   margin-right: 0;
   height: 100%;
-}
-
-.message-input {
-  margin: 0;
-  border-top: solid 1px #bbb;
 }
 
 .my-msg {

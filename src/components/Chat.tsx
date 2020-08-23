@@ -1,4 +1,4 @@
-import { IonButton, IonCard, IonCardContent, IonCol, IonGrid, IonRow, IonTextarea } from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonCol, IonContent, IonGrid, IonRow, IonTextarea } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { currTime, db, timestamp } from '../services/firebase';
 import './Chat.css';
@@ -60,13 +60,24 @@ const Chat: React.FC<ChatProps> = ({ roomId, userId }) => {
     };
   }, [room]);
 
-  // Only update array containing all messages when there are new messages
+  // Only update array containing all messages ('chats') when there are new messages
   useEffect(() => {
     if (prevMessages !== newMessages) {
       setPrevMessages(newMessages);
       setChats([...chats, ...newMessages]);
     }
   }, [prevMessages, newMessages, chats]);
+
+  // Always scroll to most recent chat message (bottom)
+  useEffect(() => {
+    console.log('scrolling');
+    let content = document.querySelector('ion-content');
+
+    // Set timeout because DOM doesn't update immediately after 'chats' state is updated
+    setTimeout(() => {
+      content?.scrollToBottom(200);
+    }, 100);
+  }, [chats]);
 
   // Send message to database
   const sendMessage = async () => {
@@ -83,7 +94,7 @@ const Chat: React.FC<ChatProps> = ({ roomId, userId }) => {
 
   return (
     <IonCard class="chat-card">
-      <IonCardContent class="message-card">
+      <IonContent class="message-card">
         <IonGrid class="message-grid">
           {!loading ? (
             chats.map((chat) => {
@@ -100,25 +111,27 @@ const Chat: React.FC<ChatProps> = ({ roomId, userId }) => {
             <></>
           )}
         </IonGrid>
-      </IonCardContent>
-      <IonCardContent class="input-card">
-        <IonGrid class="message-input">
-          <IonRow>
-            <IonCol size="9">
-              <IonTextarea
-                onIonChange={(e) => setMessage(e.detail.value!)}
-                value={message}
-                class="textarea"
-              ></IonTextarea>
-            </IonCol>
-            <IonCol size="3" class="send-msg">
-              <IonButton expand="block" color="primary" onClick={sendMessage} class="send-button">
-                Send
-              </IonButton>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
-      </IonCardContent>
+      </IonContent>
+      <IonRow class="input-card-row">
+        <IonCol size="12" sizeLg="3" class="input-card-col">
+          <IonCardContent class="input-card-content">
+            <IonRow>
+              <IonCol size="9">
+                <IonTextarea
+                  onIonChange={(e) => setMessage(e.detail.value!)}
+                  value={message}
+                  class="textarea"
+                ></IonTextarea>
+              </IonCol>
+              <IonCol size="3" class="send-msg">
+                <IonButton expand="block" color="primary" onClick={sendMessage} class="send-button">
+                  Send
+                </IonButton>
+              </IonCol>
+            </IonRow>
+          </IonCardContent>
+        </IonCol>
+      </IonRow>
     </IonCard>
   );
 };
