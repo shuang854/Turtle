@@ -40,3 +40,12 @@ const turtle = {
     },
   },
 };
+
+// TODO: Put in firebase.json
+// "functions": {
+//   "predeploy": [
+//     "npm --prefix \"$RESOURCE_DIR\" run lint",
+//     "npm --prefix \"$RESOURCE_DIR\" run build"
+//   ],
+//   "source": "functions"
+// },
