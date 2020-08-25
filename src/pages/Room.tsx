@@ -1,7 +1,8 @@
-import { IonCol, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react';
+import { IonCol, IonContent, IonGrid, IonHeader, IonPage, IonRow } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router';
 import Chat from '../components/Chatbox';
+import RoomHeader from '../components/RoomHeader';
 import VideoPlayer from '../components/VideoPlayer';
 import { auth, db, decrement, increment, rtdb } from '../services/firebase';
 import { generateAnonName } from '../services/utilities';
@@ -16,6 +17,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const [ownerId, setOwnerId] = useState('');
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
+  const [url, setUrl] = useState('https://www.youtube.com/watch?v=ysz5S6PUM-U');
 
   // Verify that the roomId exists in db
   useEffect(() => {
@@ -126,12 +128,15 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
     }
   }, [userId, validRoom, roomId, loading, userCount]);
 
+  // Function passed as prop to VideoInput component
+  const changeUrl = (newUrl: string) => {
+    setUrl(newUrl);
+  };
+
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>Turtle</IonTitle>
-        </IonToolbar>
+        <RoomHeader changeUrl={changeUrl}></RoomHeader>
       </IonHeader>
       {loading ? (
         <IonContent className="ion-padding">Loading...</IonContent>
@@ -139,7 +144,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         <IonGrid class="room-grid">
           <IonRow class="room-row">
             <IonCol size="12" sizeLg="9" class="player-col">
-              <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId}></VideoPlayer>
+              <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId} url={url}></VideoPlayer>
             </IonCol>
             <IonCol size="12" sizeLg="3" class="chat-col">
               <Chat roomId={roomId} userId={userId}></Chat>

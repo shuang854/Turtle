@@ -67,7 +67,6 @@ const Messages: React.FC<MessagesProps> = ({ roomId, userId }) => {
 
   // Always scroll to most recent chat message (bottom)
   useEffect(() => {
-    console.log('scrolling');
     let content = document.querySelector('ion-content');
 
     // Set timeout because DOM doesn't update immediately after 'chats' state is updated

@@ -5,6 +5,16 @@
   padding: 0;
 }
 
+.title {
+  text-align: left;
+  max-width: 100px;
+  padding-left: 15px;
+  padding-right: 15px;
+  color: var(--ion-color-primary);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 24px;
+}
+
 @media (min-width: 992px) {
   .player-col {
     height: calc(0.5625 * 75vw);

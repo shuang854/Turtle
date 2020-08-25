@@ -1,0 +1,14 @@
+.input-bar {
+  min-width: 200px;
+  align-self: center;
+}
+
+ion-icon {
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+}
+
+.native-input.sc-ion-input-ios {
+  padding-right: 0;
+}

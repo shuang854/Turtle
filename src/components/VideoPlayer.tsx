@@ -7,9 +7,10 @@ type VideoPlayerProps = {
   ownerId: string;
   userId: string;
   roomId: string;
+  url: string;
 };
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId, url }) => {
   const player = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState(false);
 
@@ -85,7 +86,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
   return (
     <ReactPlayer
       ref={player}
-      url="https://www.youtube.com/watch?v=ysz5S6PUM-U"
+      url={url}
       width="100%"
       height="100%"
       controls={true}
