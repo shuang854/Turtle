@@ -1,9 +1,9 @@
 import { IonButton, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { db, timestamp, auth, rtdb } from '../services/firebase';
-import './Home.css';
+import { auth, db, rtdb, timestamp } from '../services/firebase';
 import { generateAnonName } from '../services/utilities';
+import './Home.css';
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -16,6 +16,11 @@ const Home: React.FC = () => {
     const roomId = await db.collection('rooms').add({
       createdAt: timestamp,
       ownerId: userId,
+    });
+
+    await db.collection('rooms').doc(roomId.id).collection('playlist').add({
+      createdAt: timestamp,
+      url: 'https://www.youtube.com/watch?v=ksHOjnopT_U',
     });
 
     await rtdb.ref('/rooms/' + roomId.id).set({ userCount: 0 });

@@ -14,24 +14,30 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
 
   const [validRoom, setValidRoom] = useState(false);
   const [userId, setUserId] = useState('');
-  const [ownerId, setOwnerId] = useState('');
+  const [ownerId, setOwnerId] = useState('undefined');
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
-  const [url, setUrl] = useState('https://www.youtube.com/watch?v=ysz5S6PUM-U');
+  const [videoId, setVideoId] = useState('');
 
   // Verify that the roomId exists in db
   useEffect(() => {
-    const fetchRoom = async () => {
-      const room = await db.collection('rooms').doc(roomId).get();
+    const fetchRoomAndVid = async () => {
+      const roomRef = db.collection('rooms').doc(roomId);
+      const room = await roomRef.get();
       if (!room.exists) {
         history.push('/');
       } else {
         setValidRoom(true);
         setOwnerId(room.data()?.ownerId);
+
+        // Set videoId for RoomHeader component
+        const playlistSnapshot = await roomRef.collection('playlist').get();
+        const vidId = playlistSnapshot.docs[0].id;
+        setVideoId(vidId);
       }
     };
 
-    fetchRoom();
+    fetchRoomAndVid();
   }, [history, roomId]);
 
   // Handle logging in
@@ -128,15 +134,10 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
     }
   }, [userId, validRoom, roomId, loading, userCount]);
 
-  // Function passed as prop to VideoInput component
-  const changeUrl = (newUrl: string) => {
-    setUrl(newUrl);
-  };
-
   return (
     <IonPage>
       <IonHeader>
-        <RoomHeader changeUrl={changeUrl}></RoomHeader>
+        <RoomHeader roomId={roomId} videoId={videoId} ownerId={ownerId} userId={userId}></RoomHeader>
       </IonHeader>
       {loading ? (
         <IonContent className="ion-padding">Loading...</IonContent>
@@ -144,7 +145,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         <IonGrid class="room-grid">
           <IonRow class="room-row">
             <IonCol size="12" sizeLg="9" class="player-col">
-              <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId} url={url}></VideoPlayer>
+              <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId}></VideoPlayer>
             </IonCol>
             <IonCol size="12" sizeLg="3" class="chat-col">
               <Chat roomId={roomId} userId={userId}></Chat>

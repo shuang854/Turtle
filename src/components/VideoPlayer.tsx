@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { db, timestamp } from '../services/firebase';
 import { secondsToTimestamp, timestampToSeconds } from '../services/utilities';
@@ -7,12 +7,12 @@ type VideoPlayerProps = {
   ownerId: string;
   userId: string;
   roomId: string;
-  url: string;
 };
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId, url }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) => {
   const player = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState(false);
+  const [videoUrl, setVideoUrl] = useState('');
 
   // Send video playing message to database when owner plays video
   const onPlay = async () => {
@@ -83,10 +83,27 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId, url 
     };
   }, [roomId, userId]);
 
+  // Listen for video URL changes
+  useEffect(() => {
+    const urlRef = db.collection('rooms').doc(roomId).collection('playlist');
+
+    const urlUnsubscribe = urlRef.onSnapshot((querySnapshot) => {
+      const changes = querySnapshot.docChanges();
+      for (const change of changes) {
+        const data = change.doc.data();
+        setVideoUrl(data.url);
+      }
+    });
+
+    return () => {
+      urlUnsubscribe();
+    };
+  }, [roomId]);
+
   return (
     <ReactPlayer
       ref={player}
-      url={url}
+      url={videoUrl}
       width="100%"
       height="100%"
       controls={true}

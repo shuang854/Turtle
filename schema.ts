@@ -9,8 +9,14 @@ const collection = {
       messages: {
         messageId: {
           createdAt: 'timestamp',
-          senderId: 'userId',
           content: 'Message content',
+          senderId: 'userId',
+        },
+      },
+      playlist: {
+        videoId: {
+          createdAt: 'timestamp',
+          url: 'https://youtube.com',
         },
       },
     },
