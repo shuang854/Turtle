@@ -9,20 +9,6 @@ ion-textarea {
   margin: 0;
 }
 
-.input-card-row {
-  position: fixed;
-  width: 100%;
-}
-
-.input-card-col {
-  margin: 0;
-  border-top: solid 1px #999;
-}
-
-.input-card-content {
-  padding: 0;
-}
-
 .send-msg {
   align-items: center;
   justify-content: center;
@@ -33,6 +19,23 @@ ion-textarea {
   width: 100%;
 }
 
-.text-area {
+.message-input {
   height: 100%;
+  border: 1px solid #999;
+  border-radius: 5px;
+}
+
+@media (max-width: 576px) {
+  .message-input {
+    border-radius: 10px;
+    height: 35px;
+  }
+
+  .send-msg {
+    display: none;
+  }
+
+  .native-input.sc-ion-input-ios {
+    padding-inline-start: 5px;
+  }
 }

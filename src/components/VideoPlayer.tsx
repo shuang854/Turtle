@@ -111,6 +111,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
       onPause={onPause}
       playing={playing}
       muted={true}
+      config={{
+        youtube: {
+          playerVars: {
+            showinfo: 1, // Keeps mute/full screen controls at bottom for iOS
+          },
+        },
+      }}
     ></ReactPlayer>
   );
 };

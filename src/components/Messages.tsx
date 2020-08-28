@@ -1,4 +1,4 @@
-import { IonCol, IonContent, IonGrid, IonRow } from '@ionic/react';
+import { IonCol, IonGrid, IonRow, IonContent } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { currTime, db } from '../services/firebase';
 import './Messages.css';
