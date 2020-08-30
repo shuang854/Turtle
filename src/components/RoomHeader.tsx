@@ -1,6 +1,7 @@
 import { IonFabButton, IonIcon, IonInput, IonTitle, IonToolbar } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import React, { useState } from 'react';
+import { useHistory } from 'react-router';
 import { db, timestamp } from '../services/firebase';
 import './RoomHeader.css';
 
@@ -13,6 +14,7 @@ type RoomHeaderProps = {
 
 const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId, videoId }) => {
   const [videoUrl, setVideoUrl] = useState('');
+  let history = useHistory();
 
   const onSubmit = async () => {
     if (userId === ownerId) {
@@ -33,9 +35,14 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId, videoI
     }
   };
 
+  const toHome = () => {
+    history.replace('/');
+    history.go(0);
+  };
+
   return (
     <IonToolbar>
-      <IonTitle slot="start" class="title">
+      <IonTitle slot="start" onClick={toHome} class="title">
         Turtle
       </IonTitle>
       {userId === ownerId ? (

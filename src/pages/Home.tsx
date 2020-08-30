@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonTitle, IonToolbar, IonCol } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { auth, db, rtdb, timestamp } from '../services/firebase';
@@ -62,17 +62,32 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonGrid class="home-grid">
-          <IonRow>
-            {loading ? (
-              <IonContent className="ion-padding">Loading...</IonContent>
-            ) : (
-              <IonButton onClick={createRoom} class="create-room">
-                Create Room
-              </IonButton>
-            )}
-          </IonRow>
-        </IonGrid>
+        {loading ? (
+          <IonContent className="ion-padding">Loading...</IonContent>
+        ) : (
+          <IonGrid class="home-grid">
+            <IonRow>
+              <IonCol size="12" class="first-step-col">
+                Step 1:
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol size="12" class="create-col">
+                <IonButton onClick={createRoom} class="create-room">
+                  Create Room
+                </IonButton>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol size="12">Step 2:</IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol size="12" class="share-col">
+                Share the link with friends!
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        )}
       </IonContent>
     </IonPage>
   );

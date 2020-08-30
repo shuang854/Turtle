@@ -1,14 +1,36 @@
 .create-room {
-  text-align: center;
-  justify-content: center;
-  margin: 30% 10% 0 10%;
-  width: 100%;
+  width: 50%;
 }
 
 .home-grid {
   max-width: 500px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 30px;
+  color: var(--ion-color-secondary);
+  text-align: center;
 }
 
 ion-toolbar {
   text-align: center;
+}
+
+ion-title {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 24px;
+  color: var(--ion-color-primary);
+}
+
+.first-step-col {
+  margin-top: 20%;
+  margin-bottom: 10px;
+}
+
+.create-col {
+  margin-bottom: 50px;
+}
+
+.share-col {
+  margin-top: 10px;
+  font-size: 20px;
+  color: var(--ion-color-primary);
 }

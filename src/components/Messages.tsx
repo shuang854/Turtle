@@ -76,7 +76,6 @@ const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId }) => {
   // Always scroll to most recent chat message (bottom)
   useEffect(() => {
     let content = contentRef.current;
-    console.log(content);
 
     // Set timeout because DOM doesn't update immediately after 'chats' state is updated
     setTimeout(() => {

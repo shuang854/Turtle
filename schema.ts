@@ -13,6 +13,7 @@ const collection = {
               createdAt: 'timestamp',
               content: 'Message content',
               senderId: 'userId',
+              type: 'type',
             },
           },
         ],

@@ -1,10 +1,3 @@
-ion-col {
-  padding: 6px;
-  border-radius: 5px;
-  margin-bottom: 4px;
-  max-width: 70%;
-}
-
 .message-card {
   overflow-y: auto;
   height: calc(100% - 125px);
@@ -22,11 +15,19 @@ ion-col {
 }
 
 .my-msg {
+  padding: 6px;
+  border-radius: 5px;
+  margin-bottom: 4px;
+  max-width: 70%;
   background: var(--ion-color-primary);
   color: #fff;
 }
 
 .other-msg {
+  padding: 6px;
+  border-radius: 5px;
+  margin-bottom: 4px;
+  max-width: 70%;
   background: var(--ion-color-secondary);
   color: #fff;
 }

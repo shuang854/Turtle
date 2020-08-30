@@ -14,6 +14,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId, stat
   const player = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
+  const [allowUpdate, setAllowUpdate] = useState(true);
 
   // Update database on play (owner only)
   const onPlay = async () => {
@@ -87,7 +88,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId, stat
             }
 
             // Continue requesting an update on the video state, until synced
-            if (Math.abs(currTime - data.time) > SYNC_MARGIN / 1000 && data.isPlaying) {
+            if (allowUpdate && Math.abs(currTime - data.time) > SYNC_MARGIN / 1000 && data.isPlaying) {
+              setAllowUpdate(false);
+              setTimeout(() => {
+                setAllowUpdate(true);
+              }, 3000);
+
               player.current?.seekTo(data.time);
               console.log('diff: ' + Math.abs(currTime - data.time));
               db.collection('rooms').doc(roomId).collection('messages').add({
@@ -104,7 +110,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId, stat
         stateUnsubscribe();
       };
     }
-  }, [ownerId, userId, roomId]);
+  }, [ownerId, userId, roomId, allowUpdate]);
 
   // Listen for video updateState requests (owner only)
   useEffect(() => {
