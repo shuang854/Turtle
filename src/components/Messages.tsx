@@ -4,6 +4,7 @@ import { currTime, db } from '../services/firebase';
 import './Messages.css';
 
 type MessagesProps = {
+  ownerId: string;
   roomId: string;
   userId: string;
 };
@@ -15,8 +16,7 @@ type Message = {
   content: string;
 };
 
-const Messages: React.FC<MessagesProps> = ({ roomId, userId }) => {
-  const [room] = useState(roomId);
+const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId }) => {
   const [chats, setChats] = useState<Message[]>([
     { id: '', senderId: userId, sender: '', content: 'You have joined the room.' },
   ]); // All received messages
@@ -36,7 +36,7 @@ const Messages: React.FC<MessagesProps> = ({ roomId, userId }) => {
   useEffect(() => {
     const chatUnsubscribe = db
       .collection('rooms')
-      .doc(room)
+      .doc(roomId)
       .collection('messages')
       .orderBy('createdAt')
       .where('createdAt', '>', currTime)
@@ -48,10 +48,15 @@ const Messages: React.FC<MessagesProps> = ({ roomId, userId }) => {
             const data = change.doc.data();
             const user = await db.collection('users').doc(data.senderId).get();
             if (data.type !== 'updateState') {
+              let displayName = user.data()?.name;
+              if (data.senderId === ownerId) {
+                displayName = displayName + ' 👑';
+              }
+
               newMsgs.push({
                 id: change.doc.id,
                 senderId: data.senderId,
-                sender: user.data()?.name,
+                sender: displayName,
                 content: data.content,
               });
             }
@@ -66,11 +71,12 @@ const Messages: React.FC<MessagesProps> = ({ roomId, userId }) => {
     return () => {
       chatUnsubscribe();
     };
-  }, [room]);
+  }, [roomId, ownerId]);
 
   // Always scroll to most recent chat message (bottom)
   useEffect(() => {
     let content = contentRef.current;
+    console.log(content);
 
     // Set timeout because DOM doesn't update immediately after 'chats' state is updated
     setTimeout(() => {

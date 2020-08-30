@@ -154,7 +154,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
               <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId} stateId={stateId}></VideoPlayer>
             </IonCol>
             <IonCol size="12" sizeLg="3" class="chat-col">
-              <Chat roomId={roomId} userId={userId}></Chat>
+              <Chat ownerId={ownerId} roomId={roomId} userId={userId}></Chat>
             </IonCol>
           </IonRow>
         </IonGrid>

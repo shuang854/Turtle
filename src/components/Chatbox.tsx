@@ -5,11 +5,12 @@ import './Chatbox.css';
 import Messages from './Messages';
 
 type ChatboxProps = {
+  ownerId: string;
   roomId: string;
   userId: string;
 };
 
-const Chat: React.FC<ChatboxProps> = ({ roomId, userId }) => {
+const Chat: React.FC<ChatboxProps> = ({ ownerId, roomId, userId }) => {
   const [message, setMessage] = useState(''); // Message to be sent
 
   // Send message to database
@@ -35,7 +36,7 @@ const Chat: React.FC<ChatboxProps> = ({ roomId, userId }) => {
 
   return (
     <IonCard class="chat-card">
-      <Messages roomId={roomId} userId={userId}></Messages>
+      <Messages ownerId={ownerId} roomId={roomId} userId={userId}></Messages>
       <IonFooter>
         <IonRow>
           <IonCol size="12" sizeSm="9" class="message-col">
