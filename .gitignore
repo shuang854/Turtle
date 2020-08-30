@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# credentials
+/src/services/firebase.ts
+
 # production
 /build
 /.firebase
