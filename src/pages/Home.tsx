@@ -18,9 +18,15 @@ const Home: React.FC = () => {
       ownerId: userId,
     });
 
-    await db.collection('rooms').doc(roomId.id).collection('playlist').add({
+    const roomRef = db.collection('rooms').doc(roomId.id);
+    await roomRef.collection('playlist').add({
       createdAt: timestamp,
       url: 'https://www.youtube.com/watch?v=ksHOjnopT_U',
+    });
+
+    await roomRef.collection('states').add({
+      time: 0,
+      isPlaying: false,
     });
 
     await rtdb.ref('/rooms/' + roomId.id).set({ userCount: 0 });

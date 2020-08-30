@@ -13,10 +13,16 @@ ion-textarea {
   align-items: center;
   justify-content: center;
   display: flex;
+  padding-left: 0;
 }
 
 .send-button {
   width: 100%;
+}
+
+.message-col {
+  white-space: normal;
+  padding: 10px;
 }
 
 .message-input {

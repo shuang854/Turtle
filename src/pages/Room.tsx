@@ -18,6 +18,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
   const [videoId, setVideoId] = useState('');
+  const [stateId, setStateId] = useState('');
 
   // Verify that the roomId exists in db
   useEffect(() => {
@@ -27,13 +28,18 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
       if (!room.exists) {
         history.push('/');
       } else {
-        setValidRoom(true);
-        setOwnerId(room.data()?.ownerId);
-
         // Set videoId for RoomHeader component
         const playlistSnapshot = await roomRef.collection('playlist').get();
         const vidId = playlistSnapshot.docs[0].id;
         setVideoId(vidId);
+
+        // Set stateId for VideoPlayer component
+        const stateSnapshot = await roomRef.collection('states').get();
+        const vidStateId = stateSnapshot.docs[0].id;
+        setStateId(vidStateId);
+
+        setOwnerId(room.data()?.ownerId);
+        setValidRoom(true);
       }
     };
 
@@ -145,7 +151,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         <IonGrid class="room-grid">
           <IonRow class="room-row">
             <IonCol size="12" sizeLg="9" class="player-col">
-              <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId}></VideoPlayer>
+              <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId} stateId={stateId}></VideoPlayer>
             </IonCol>
             <IonCol size="12" sizeLg="3" class="chat-col">
               <Chat roomId={roomId} userId={userId}></Chat>

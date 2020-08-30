@@ -2,30 +2,46 @@
 
 // Firestore
 const collection = {
-  rooms: {
-    roomId: {
-      createdAt: 'timestamp',
-      ownerId: 'userId',
-      messages: {
-        messageId: {
-          createdAt: 'timestamp',
-          content: 'Message content',
-          senderId: 'userId',
-        },
-      },
-      playlist: {
-        videoId: {
-          createdAt: 'timestamp',
-          url: 'https://youtube.com',
-        },
+  rooms: [
+    {
+      roomId: {
+        createdAt: 'timestamp',
+        ownerId: 'userId',
+        messages: [
+          {
+            messageId: {
+              createdAt: 'timestamp',
+              content: 'Message content',
+              senderId: 'userId',
+            },
+          },
+        ],
+        playlist: [
+          {
+            videoId: {
+              createdAt: 'timestamp',
+              url: 'https://youtube.com',
+            },
+          },
+        ],
+        states: [
+          {
+            stateId: {
+              time: 'timestamp',
+              isPlaying: true,
+            },
+          },
+        ],
       },
     },
-  },
-  users: {
-    userId: {
-      name: 'Anonymous',
+  ],
+  users: [
+    {
+      userId: {
+        name: 'Anonymous',
+      },
     },
-  },
+  ],
 };
 
 // Realtime Database - needed for tracking user presence

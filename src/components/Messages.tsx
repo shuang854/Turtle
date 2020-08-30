@@ -1,5 +1,5 @@
-import { IonCol, IonGrid, IonRow, IonContent } from '@ionic/react';
-import React, { useEffect, useState } from 'react';
+import { IonCol, IonContent, IonGrid, IonRow } from '@ionic/react';
+import React, { useEffect, useRef, useState } from 'react';
 import { currTime, db } from '../services/firebase';
 import './Messages.css';
 
@@ -22,6 +22,7 @@ const Messages: React.FC<MessagesProps> = ({ roomId, userId }) => {
   ]); // All received messages
   const [prevMessages, setPrevMessages] = useState<Message[]>([]); // Track previous messages
   const [newMessages, setNewMessages] = useState<Message[]>([]); // Newly retrieved messages
+  const contentRef = useRef<HTMLIonContentElement>(null);
 
   // Only update array containing all messages ('chats') when there are new messages
   useEffect(() => {
@@ -45,13 +46,15 @@ const Messages: React.FC<MessagesProps> = ({ roomId, userId }) => {
         for (const change of changes) {
           if (change.type === 'added') {
             const data = change.doc.data();
-            const user = await db.collection('users').doc(data?.senderId).get();
-            newMsgs.push({
-              id: change.doc.id,
-              senderId: data?.senderId,
-              sender: user.data()?.name,
-              content: data?.content,
-            });
+            const user = await db.collection('users').doc(data.senderId).get();
+            if (data.type !== 'updateState') {
+              newMsgs.push({
+                id: change.doc.id,
+                senderId: data.senderId,
+                sender: user.data()?.name,
+                content: data.content,
+              });
+            }
           }
         }
 
@@ -67,7 +70,7 @@ const Messages: React.FC<MessagesProps> = ({ roomId, userId }) => {
 
   // Always scroll to most recent chat message (bottom)
   useEffect(() => {
-    let content = document.querySelector('ion-content');
+    let content = contentRef.current;
 
     // Set timeout because DOM doesn't update immediately after 'chats' state is updated
     setTimeout(() => {
@@ -76,7 +79,7 @@ const Messages: React.FC<MessagesProps> = ({ roomId, userId }) => {
   }, [chats]);
 
   return (
-    <IonContent class="message-card">
+    <IonContent class="message-card" ref={contentRef}>
       <IonGrid class="message-grid">
         {chats.map((chat) => {
           return (

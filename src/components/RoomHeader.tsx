@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { db, timestamp } from '../services/firebase';
 import './RoomHeader.css';
 
-type VideoInputProps = {
+type RoomHeaderProps = {
   roomId: string;
   userId: string;
   ownerId: string;
   videoId: string;
 };
 
-const VideoInput: React.FC<VideoInputProps> = ({ roomId, userId, ownerId, videoId }) => {
+const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId, videoId }) => {
   const [videoUrl, setVideoUrl] = useState('');
 
   const onSubmit = async () => {
@@ -25,7 +25,7 @@ const VideoInput: React.FC<VideoInputProps> = ({ roomId, userId, ownerId, videoI
           createdAt: timestamp,
           senderId: userId,
           content: 'changed the video',
-          type: 'system',
+          type: 'change',
         });
       }
 
@@ -61,4 +61,4 @@ const VideoInput: React.FC<VideoInputProps> = ({ roomId, userId, ownerId, videoI
   );
 };
 
-export default VideoInput;
+export default RoomHeader;

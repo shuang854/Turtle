@@ -19,7 +19,7 @@ const Chat: React.FC<ChatboxProps> = ({ roomId, userId }) => {
         createdAt: timestamp,
         senderId: userId,
         content: message,
-        type: 'user',
+        type: 'chat',
       });
     }
 
