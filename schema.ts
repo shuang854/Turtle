@@ -60,6 +60,7 @@ const turtle = {
       userId: {
         name: 'Username',
       },
+      userCount: 0,
     },
   },
 };

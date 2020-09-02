@@ -19,6 +19,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const [userCount, setUserCount] = useState(0);
   const [videoId, setVideoId] = useState('');
   const [stateId, setStateId] = useState('');
+  const [userList, setUserList] = useState<string[]>(['']);
 
   // Verify that the roomId exists in db
   useEffect(() => {
@@ -73,9 +74,19 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
 
         // Keep track of online user presence in realtime database rooms
         roomRef.on('value', async (snapshot) => {
+          // Populate list of users in a room
+          const set: string[] = [];
+          snapshot.forEach((childSnapshot) => {
+            if (childSnapshot.key !== 'userCount') {
+              set.push(childSnapshot.child('name').val());
+            }
+          });
+          setUserList(set);
+
           if (!snapshot.hasChild(userId)) {
             // Keep userId in the room as long as a connection from the client exists
-            await roomRef.child(userId).set({ name: 'placeholder' });
+            const username = (await db.collection('users').doc(userId).get()).data()?.name;
+            await roomRef.child(userId).set({ name: username });
             await roomRef.update({ userCount: increment });
           }
         });
@@ -154,7 +165,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
               <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId} stateId={stateId}></VideoPlayer>
             </IonCol>
             <IonCol size="12" sizeLg="3" class="chat-col">
-              <Chat ownerId={ownerId} roomId={roomId} userId={userId}></Chat>
+              <Chat ownerId={ownerId} roomId={roomId} userId={userId} userList={userList}></Chat>
             </IonCol>
           </IonRow>
         </IonGrid>
