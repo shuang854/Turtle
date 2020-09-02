@@ -2,11 +2,14 @@
   width: 50%;
 }
 
+.home-content {
+  --background: var(--ion-color-light-shade);
+}
+
 .home-grid {
   max-width: 500px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 30px;
-  color: var(--ion-color-secondary);
+  font-size: 26px;
+  color: var(--ion-color-primary);
   text-align: center;
 }
 
@@ -15,8 +18,8 @@ ion-toolbar {
 }
 
 ion-title {
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  font-size: 24px;
+  font-size: 28px;
+  font-style: oblique;
   color: var(--ion-color-primary);
 }
 
@@ -30,7 +33,6 @@ ion-title {
 }
 
 .share-col {
-  margin-top: 10px;
+  margin-top: 8px;
   font-size: 20px;
-  color: var(--ion-color-primary);
 }

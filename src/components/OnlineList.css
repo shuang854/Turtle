@@ -7,10 +7,6 @@
   padding-top: 2px;
 }
 
-.online-popover .popover-content {
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-}
-
 .list-header {
   font-size: 24px;
   color: var(--ion-color-primary);

@@ -36,14 +36,14 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId, videoI
   };
 
   const toHome = () => {
-    history.replace('/');
+    history.push('/');
     history.go(0);
   };
 
   return (
     <IonToolbar>
       <IonTitle slot="start" onClick={toHome} class="title">
-        Turtle
+        TURTLE
       </IonTitle>
       {userId === ownerId ? (
         <>

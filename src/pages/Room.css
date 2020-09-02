@@ -1,4 +1,5 @@
 .room-grid {
+  background: var(--ion-color-light-shade);
   margin-inline-start: 0;
   margin-inline-end: 0;
   height: 100%;

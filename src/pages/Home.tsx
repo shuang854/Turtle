@@ -58,10 +58,10 @@ const Home: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Turtle</IonTitle>
+          <IonTitle>TURTLE</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent class="home-content">
         {loading ? (
           <IonContent className="ion-padding">Loading...</IonContent>
         ) : (

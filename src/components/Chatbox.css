@@ -3,6 +3,7 @@ ion-textarea {
 }
 
 .chat-card {
+  background: var(--ion-color-light);
   height: 100%;
   width: 100%;
   float: right;
@@ -11,6 +12,7 @@ ion-textarea {
 
 .message-toolbar {
   padding-left: 5px;
+  --background: var(--ion-color-light);
 }
 
 .footer-ios ion-toolbar:first-of-type {
