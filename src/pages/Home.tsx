@@ -21,7 +21,7 @@ const Home: React.FC = () => {
     const roomRef = db.collection('rooms').doc(roomId.id);
     await roomRef.collection('playlist').add({
       createdAt: timestamp,
-      url: 'https://www.youtube.com/watch?v=ksHOjnopT_U',
+      url: 'https://www.youtube.com/watch?v=XEfDYMngJeE',
     });
 
     await roomRef.collection('states').add({

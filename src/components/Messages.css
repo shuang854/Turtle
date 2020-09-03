@@ -7,7 +7,7 @@
 .message-grid {
   margin-right: 0;
   height: 100%;
-  user-select: auto;
+  user-select: text;
 }
 
 .right-align {

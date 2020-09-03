@@ -52,7 +52,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId, videoI
             type="url"
             inputmode="search"
             class="input-bar"
-            placeholder="Upload new video by URL"
+            placeholder="Upload video by URL"
             onIonChange={(e) => setVideoUrl(e.detail.value!)}
             value={videoUrl}
             onSubmit={onSubmit}

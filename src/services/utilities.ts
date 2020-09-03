@@ -1,24 +1,34 @@
 const adjectives = [
-  'Adamant',
-  'Instinctive',
+  'Abaft',
   'Actually',
-  'Husky',
-  'Bent',
-  'Fascinated',
-  'Sexual',
-  'Mute',
-  'Silent',
-  'Coherent',
-  'Juvenile',
-  'Naughty',
-  'Foreign',
-  'Earthy',
-  'Diligent',
-  'Anxious',
+  'Adamant',
   'Adorable',
+  'Anxious',
+  'Bent',
+  'Bright',
+  'Coherent',
+  'Curious',
+  'Diligent',
+  'Earthy',
+  'Fascinated',
+  'Foreign',
+  'Hateful',
+  'Husky',
+  'Instinctive',
+  'Jagged',
+  'Juvenile',
+  'Military',
+  'Mute',
+  'Naughty',
+  'Neat',
+  'Nifty',
+  'Parallel',
   'Quack',
-  'Unequal',
+  'Roomy',
+  'Sedate',
   'Sharp',
+  'Silent',
+  'Unequal',
 ];
 
 const animals = [
@@ -59,7 +69,7 @@ const animals = [
 // };
 
 export const generateAnonName = (): string => {
-  const adj: string = adjectives[Math.floor(Math.random() * 20)];
+  const adj: string = adjectives[Math.floor(Math.random() * 30)];
   const animal: string = animals[Math.floor(Math.random() * 20)];
   return adj + ' ' + animal;
 };
