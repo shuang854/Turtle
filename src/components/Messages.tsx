@@ -1,6 +1,6 @@
 import { IonCol, IonContent, IonGrid, IonRow } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
-import { currTime, db } from '../services/firebase';
+import { currTime, db, TimestampType } from '../services/firebase';
 import './Messages.css';
 
 type MessagesProps = {
@@ -16,55 +16,30 @@ type Message = {
   content: string;
 };
 
+type RawMessage = {
+  content: string;
+  createdAt: TimestampType;
+  senderId: string;
+};
+
 const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId }) => {
   const [chats, setChats] = useState<Message[]>([
     { id: '', senderId: userId, sender: '', content: 'You have joined the room.' },
   ]); // All received messages
+  const [messages, setMessages] = useState<RawMessage[]>();
   const [prevMessages, setPrevMessages] = useState<Message[]>([]); // Track previous messages
-  const [newMessages, setNewMessages] = useState<Message[]>([]); // Newly retrieved messages
   const contentRef = useRef<HTMLIonContentElement>(null);
-
-  // Only update array containing all messages ('chats') when there are new messages
-  useEffect(() => {
-    if (prevMessages !== newMessages) {
-      setPrevMessages(newMessages);
-      setChats([...chats, ...newMessages]);
-    }
-  }, [prevMessages, newMessages, chats]);
 
   // Listen for new messages
   useEffect(() => {
     const chatUnsubscribe = db
-      .collection('rooms')
+      .collection('chats')
       .doc(roomId)
-      .collection('messages')
-      .orderBy('createdAt')
-      .where('createdAt', '>', currTime)
-      .onSnapshot(async (querySnapshot) => {
-        let newMsgs: Message[] = [];
-        const changes = querySnapshot.docChanges();
-        for (const change of changes) {
-          if (change.type === 'added') {
-            const data = change.doc.data();
-            const user = await db.collection('users').doc(data.senderId).get();
-            if (data.type !== 'updateState') {
-              let displayName = user.data()?.name;
-              if (data.senderId === ownerId) {
-                displayName = displayName + ' 👑';
-              }
-
-              newMsgs.push({
-                id: change.doc.id,
-                senderId: data.senderId,
-                sender: displayName,
-                content: data.content,
-              });
-            }
-          }
-        }
-
-        if (newMsgs.length !== 0) {
-          setNewMessages(newMsgs);
+      .onSnapshot((docSnapshot) => {
+        const data = docSnapshot.data();
+        if (data !== undefined) {
+          const messages = data.messages;
+          setMessages(messages);
         }
       });
 
@@ -72,6 +47,10 @@ const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId }) => {
       chatUnsubscribe();
     };
   }, [roomId, ownerId]);
+
+  // Listen for list of users in the room
+
+  useEffect(() => {}, [messages]);
 
   // Always scroll to most recent chat message (bottom)
   useEffect(() => {
