@@ -1,0 +1,29 @@
+.online-button {
+  margin: 0 4px 0 0;
+  align-self: center;
+  --box-shadow: 0 3px 2px -1px rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+.popover-list {
+  padding-top: 2px;
+}
+
+.list-header {
+  font-size: 24px;
+  color: var(--ion-color-primary);
+  border-bottom: 1px solid #999;
+}
+
+.online-item {
+  --padding-start: 12px;
+  --min-height: 0;
+}
+
+.online-label {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+ion-backdrop {
+  cursor: default;
+}

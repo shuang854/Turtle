@@ -1,16 +1,19 @@
-import { IonButton, IonCard, IonCol, IonFooter, IonInput, IonRow } from '@ionic/react';
+import { IonCard, IonFabButton, IonFooter, IonIcon, IonInput, IonToolbar } from '@ionic/react';
+import { sendOutline } from 'ionicons/icons';
 import React, { useState } from 'react';
 import { db, timestamp } from '../services/firebase';
 import './Chatbox.css';
 import Messages from './Messages';
+import OnlineList from './OnlineList';
 
 type ChatboxProps = {
   ownerId: string;
   roomId: string;
   userId: string;
+  userList: string[];
 };
 
-const Chat: React.FC<ChatboxProps> = ({ ownerId, roomId, userId }) => {
+const Chat: React.FC<ChatboxProps> = ({ ownerId, roomId, userId, userList }) => {
   const [message, setMessage] = useState(''); // Message to be sent
 
   // Send message to database
@@ -38,23 +41,20 @@ const Chat: React.FC<ChatboxProps> = ({ ownerId, roomId, userId }) => {
     <IonCard class="chat-card">
       <Messages ownerId={ownerId} roomId={roomId} userId={userId}></Messages>
       <IonFooter>
-        <IonRow>
-          <IonCol size="12" sizeSm="9" class="message-col">
-            <IonInput
-              onIonChange={(e) => setMessage(e.detail.value!)}
-              onKeyDown={(e) => onEnter(e)}
-              value={message}
-              placeholder="Send message"
-              enterkeyhint="send"
-              class="message-input"
-            ></IonInput>
-          </IonCol>
-          <IonCol size="3" class="send-msg">
-            <IonButton expand="block" color="primary" onClick={sendMessage} class="send-button">
-              Send
-            </IonButton>
-          </IonCol>
-        </IonRow>
+        <IonToolbar class="message-toolbar">
+          <IonInput
+            onIonChange={(e) => setMessage(e.detail.value!)}
+            onKeyDown={(e) => onEnter(e)}
+            value={message}
+            placeholder="Send message"
+            enterkeyhint="send"
+            class="message-input"
+          ></IonInput>
+          <IonFabButton slot="end" size="small" onClick={sendMessage} class="send-button">
+            <IonIcon icon={sendOutline}></IonIcon>
+          </IonFabButton>
+          <OnlineList userList={userList}></OnlineList>
+        </IonToolbar>
       </IonFooter>
     </IonCard>
   );

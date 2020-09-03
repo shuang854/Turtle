@@ -33,14 +33,14 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId }) => {
   };
 
   const toHome = () => {
-    history.replace('/');
+    history.push('/');
     history.go(0);
   };
 
   return (
     <IonToolbar>
       <IonTitle slot="start" onClick={toHome} class="title">
-        Turtle
+        TURTLE
       </IonTitle>
       {userId === ownerId ? (
         <>
@@ -49,7 +49,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId }) => {
             type="url"
             inputmode="search"
             class="input-bar"
-            placeholder="Upload new video by URL"
+            placeholder="Upload video by URL"
             onIonChange={(e) => setVideoUrl(e.detail.value!)}
             value={videoUrl}
             onSubmit={onSubmit}
