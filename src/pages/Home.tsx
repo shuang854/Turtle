@@ -17,13 +17,19 @@ const Home: React.FC = () => {
     const roomId = await db.collection('rooms').add({
       createdAt: timestamp,
       ownerId: userId,
-      playlist: [{ createdAt: timestamp, url: 'https://www.youtube.com/watch?v=ksHOjnopT_U' }],
       requests: [],
       state: { time: 0, isPlaying: false },
     });
-
     await db.collection('chats').doc(roomId.id).set({
       messages: [],
+    });
+    await db.collection('playlists').doc(roomId.id).set({
+      createdAt: timestamp,
+      url: 'https://www.youtube.com/watch?v=XEfDYMngJeE',
+    });
+    await db.collection('states').doc(roomId.id).set({
+      isPlaying: false,
+      time: 0,
     });
 
     // RealTimeDB preparations

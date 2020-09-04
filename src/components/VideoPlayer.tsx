@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { db, timestamp, arrayUnion } from '../services/firebase';
+import { db, arrayUnion } from '../services/firebase';
 import { SYNC_MARGIN } from '../services/utilities';
 
 type VideoPlayerProps = {
@@ -21,12 +21,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
     if (ownerId === userId) {
       const currTime = player.current?.getCurrentTime();
       if (currTime !== undefined) {
+        await db.collection('states').doc(roomId).update({
+          isPlaying: true,
+          time: currTime,
+        });
+
         await db
           .collection('rooms')
           .doc(roomId)
           .update({
-            requests: arrayUnion({ createdAt: timestamp, senderId: userId, type: 'play' }),
-            state: { isPlaying: true, time: currTime },
+            requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: currTime, type: 'play' }),
           });
       }
     }
@@ -38,12 +42,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
     if (ownerId === userId) {
       const currTime = player.current?.getCurrentTime();
       if (currTime !== undefined) {
+        await db.collection('states').doc(roomId).update({
+          isPlaying: false,
+          time: currTime,
+        });
+
         await db
           .collection('rooms')
           .doc(roomId)
           .update({
-            requests: arrayUnion({ createdAt: timestamp, senderId: userId, type: 'pause' }),
-            state: { isPlaying: false, time: currTime },
+            requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: currTime, type: 'pause' }),
           });
       }
     }
@@ -52,11 +60,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
   // Request an update after buffering is finished (member only)
   const onBufferEnd = () => {
     if (ownerId !== userId) {
-      db.collection('rooms').doc(roomId).collection('messages').add({
-        createdAt: timestamp,
-        senderId: userId,
-        type: 'updateState',
-      });
+      db.collection('rooms')
+        .doc(roomId)
+        .update({
+          requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'updateState' }),
+        });
     }
   };
 
@@ -85,7 +93,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
 
             player.current?.seekTo(realTimeState);
             roomRef.update({
-              requests: arrayUnion({ createdAt: timestamp, senderId: userId, type: 'updateState' }),
+              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'updateState' }),
             });
           }
         }
@@ -108,7 +116,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
         const requests = docSnapshot.data()?.requests;
         const req = requests[requests.length - 1];
 
-        if (req.type === 'updateState' && req.senderId !== userId) {
+        if (!!req && req.type === 'updateState' && req.senderId !== userId) {
           const currTime = player.current?.getCurrentTime();
           if (currTime !== undefined) {
             stateRef.update({
@@ -127,7 +135,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
 
   // Listen for video URL changes
   useEffect(() => {
-    const playlistRef = db.collection('playlist').doc(roomId);
+    const playlistRef = db.collection('playlists').doc(roomId);
     const playlistUnsubscribe = playlistRef.onSnapshot((docSnapshot) => {
       const data = docSnapshot.data();
       if (data !== undefined) {

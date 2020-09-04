@@ -2,7 +2,7 @@ import { IonFabButton, IonIcon, IonInput, IonTitle, IonToolbar } from '@ionic/re
 import { add } from 'ionicons/icons';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
-import { db, timestamp, arrayUnion } from '../services/firebase';
+import { db, arrayUnion } from '../services/firebase';
 import './RoomHeader.css';
 
 type RoomHeaderProps = {
@@ -25,7 +25,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId }) => {
         .collection('rooms')
         .doc(roomId)
         .update({
-          requests: arrayUnion({ createdAt: timestamp, senderId: userId, type: 'change' }),
+          requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'change' }),
         });
 
       setVideoUrl('');

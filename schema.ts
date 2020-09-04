@@ -37,6 +37,7 @@ const collection = {
         requests: [
           {
             createdAt: 'timestamp',
+            time: '01:25:44', // Relevant for 'play', 'pause' types
             type: 'updateState',
             senderId: 'userId',
           },

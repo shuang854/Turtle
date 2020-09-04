@@ -4,7 +4,7 @@ import { peopleOutline } from 'ionicons/icons';
 import './OnlineList.css';
 
 type OnlineListProps = {
-  userList: string[];
+  userList: Map<string, string>;
 };
 
 const OnlineList: React.FC<OnlineListProps> = ({ userList }) => {
@@ -24,7 +24,7 @@ const OnlineList: React.FC<OnlineListProps> = ({ userList }) => {
       >
         <IonList class="popover-list">
           <IonListHeader class="list-header">Online</IonListHeader>
-          {userList.map((user) => {
+          {Array.from(userList.values()).map((user) => {
             return (
               <IonItem key={user} class="online-item" lines="none">
                 <IonLabel class="online-label">{user}</IonLabel>

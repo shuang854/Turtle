@@ -1,7 +1,7 @@
 import { IonCard, IonFabButton, IonFooter, IonIcon, IonInput, IonToolbar } from '@ionic/react';
 import { sendOutline } from 'ionicons/icons';
 import React, { useState } from 'react';
-import { db, timestamp } from '../services/firebase';
+import { db, arrayUnion } from '../services/firebase';
 import './Chatbox.css';
 import Messages from './Messages';
 import OnlineList from './OnlineList';
@@ -10,7 +10,7 @@ type ChatboxProps = {
   ownerId: string;
   roomId: string;
   userId: string;
-  userList: string[];
+  userList: Map<string, string>;
 };
 
 const Chat: React.FC<ChatboxProps> = ({ ownerId, roomId, userId, userList }) => {
@@ -19,16 +19,20 @@ const Chat: React.FC<ChatboxProps> = ({ ownerId, roomId, userId, userList }) => 
   // Send message to database
   const sendMessage = async () => {
     if (message !== '') {
-      await db.collection('rooms').doc(roomId).collection('messages').add({
-        createdAt: timestamp,
-        senderId: userId,
-        content: message,
-        type: 'chat',
-      });
-    }
+      await db
+        .collection('chats')
+        .doc(roomId)
+        .update({
+          messages: arrayUnion({
+            createdAt: Date.now(),
+            senderId: userId,
+            content: message,
+          }),
+        });
 
-    // Reset textarea field
-    setMessage('');
+      // Reset textarea field
+      setMessage('');
+    }
   };
 
   const onEnter = (e: React.KeyboardEvent<HTMLIonInputElement>) => {
@@ -39,7 +43,7 @@ const Chat: React.FC<ChatboxProps> = ({ ownerId, roomId, userId, userList }) => 
 
   return (
     <IonCard class="chat-card">
-      <Messages ownerId={ownerId} roomId={roomId} userId={userId}></Messages>
+      <Messages ownerId={ownerId} roomId={roomId} userId={userId} userList={userList}></Messages>
       <IonFooter>
         <IonToolbar class="message-toolbar">
           <IonInput

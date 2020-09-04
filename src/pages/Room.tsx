@@ -17,7 +17,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const [ownerId, setOwnerId] = useState('undefined');
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
-  const [userList, setUserList] = useState<string[]>(['']);
+  const [userList, setUserList] = useState<Map<string, string>>(new Map<string, string>());
 
   // Handle logging in
   useEffect(() => {
@@ -63,13 +63,13 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         // Keep track of online user presence in realtime database rooms
         roomRef.on('value', async (snapshot) => {
           // Populate list of users in a room
-          const set: string[] = [];
+          const map: Map<string, string> = new Map<string, string>();
           snapshot.forEach((childSnapshot) => {
-            if (childSnapshot.key !== 'userCount') {
-              set.push(childSnapshot.child('name').val());
+            if (childSnapshot.key !== null && childSnapshot.key !== 'userCount') {
+              map.set(childSnapshot.key, childSnapshot.child('name').val());
             }
           });
-          setUserList(set);
+          setUserList(map);
 
           if (!snapshot.hasChild(userId)) {
             // Keep userId in the room as long as a connection from the client exists
