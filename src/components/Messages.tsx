@@ -137,14 +137,18 @@ const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId, userList }
     return allMessages
       .sort((msg1, msg2) => msg1.createdAt - msg2.createdAt)
       .map((msg) => {
-        return (
-          <IonRow key={msg.id} class={msg.senderId === userId ? 'right-align' : ''}>
-            <IonCol size="auto" class={msg.senderId === userId ? 'my-msg' : 'other-msg'}>
-              {getName(msg.senderId) !== '' ? <b>{getName(msg.senderId)}: </b> : <></>}
-              <span>{msg.content}</span>
-            </IonCol>
-          </IonRow>
-        );
+        if (getName(msg.senderId) !== undefined) {
+          return (
+            <IonRow key={msg.id} class={msg.senderId === userId ? 'right-align' : ''}>
+              <IonCol size="auto" class={msg.senderId === userId ? 'my-msg' : 'other-msg'}>
+                {getName(msg.senderId) !== '' ? <b>{getName(msg.senderId)}: </b> : <></>}
+                <span>{msg.content}</span>
+              </IonCol>
+            </IonRow>
+          );
+        } else {
+          return <></>;
+        }
       });
   };
 
