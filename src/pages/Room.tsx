@@ -114,10 +114,11 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   // Handle disconnect events
   useEffect(() => {
     if (!loading && userId !== '' && validRoom) {
-      const depopulateRoom = async () => {
+      const depopulate = async () => {
         const refUser = rtdb.ref('/rooms/' + roomId + '/' + userId);
         const refRoom = rtdb.ref('/rooms/' + roomId);
         const refAvailable = rtdb.ref('/available/' + roomId);
+        const refChat = rtdb.ref('/chats/' + roomId);
 
         // Always remove user from room on disconnect
         await refRoom.onDisconnect().update({ userCount: decrement });
@@ -127,15 +128,17 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         if (userCount <= 1) {
           await refRoom.onDisconnect().remove();
           await refAvailable.onDisconnect().remove();
+          await refChat.onDisconnect().remove();
         } else {
-          await refRoom.onDisconnect().cancel(); // Cancels all disconnect actions at and under refRoom
+          await refRoom.onDisconnect().cancel(); // Cancel all disconnect actions
           await refAvailable.onDisconnect().cancel();
+          await refChat.onDisconnect().cancel();
           await refRoom.onDisconnect().update({ userCount: decrement }); // User disconnect still needs to be handled
           await refUser.onDisconnect().remove();
         }
       };
 
-      depopulateRoom();
+      depopulate();
     }
   }, [userId, validRoom, roomId, loading, userCount]);
 

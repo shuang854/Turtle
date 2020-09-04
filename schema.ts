@@ -8,19 +8,6 @@
 
 // Firestore
 const collection = {
-  chats: [
-    {
-      roomId: {
-        messages: [
-          {
-            content: 'Message content',
-            createdAt: 'timestamp',
-            senderId: 'userId',
-          },
-        ],
-      },
-    },
-  ],
   playlists: [
     {
       roomId: {
@@ -68,6 +55,17 @@ const turtle = {
   available: {
     roomId: {
       createdAt: '2020-08-12T00:13:16.273Z',
+    },
+  },
+
+  // Keep chats in Realtime DB could potentially lower cost
+  chats: {
+    roomId: {
+      messageId: {
+        content: 'Message content',
+        senderId: 'userId',
+        createdAt: 'timestamp',
+      },
     },
   },
 

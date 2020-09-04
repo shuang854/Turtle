@@ -1,6 +1,6 @@
 import { IonCol, IonContent, IonGrid, IonRow } from '@ionic/react';
 import React, { useEffect, useRef, useState } from 'react';
-import { db, arrayUnion } from '../services/firebase';
+import { db, arrayUnion, rtdb } from '../services/firebase';
 import './Messages.css';
 import { secondsToTimestamp } from '../services/utilities';
 
@@ -37,31 +37,22 @@ const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId, userList }
 
   // Listen for new chat messages
   useEffect(() => {
-    const chatUnsubscribe = db
-      .collection('chats')
-      .doc(roomId)
-      .onSnapshot((docSnapshot) => {
-        const data = docSnapshot.data();
-        if (data !== undefined) {
-          const messages = data.messages;
-
-          let arr: Message[] = [];
-          for (const msg of messages) {
-            if (msg.createdAt > joinTime) {
-              arr.push({
-                content: msg.content,
-                createdAt: msg.createdAt,
-                id: msg.senderId + msg.createdAt,
-                senderId: msg.senderId,
-              });
-            }
-          }
-          setChats(arr);
-        }
+    rtdb.ref('/chats/' + roomId).on('value', (snapshot) => {
+      let arr: Message[] = [];
+      snapshot.forEach((child) => {
+        const msg = child.val();
+        arr.push({
+          content: msg.content,
+          createdAt: msg.createdAt,
+          id: msg.senderId + msg.createdAt,
+          senderId: msg.senderId,
+        });
       });
+      setChats(arr);
+    });
 
     return () => {
-      chatUnsubscribe();
+      rtdb.ref('/chats/' + roomId).off('value');
     };
   }, [roomId, joinTime]);
 
@@ -142,22 +133,24 @@ const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId, userList }
     return name;
   };
 
+  const renderMessages = () => {
+    return allMessages
+      .sort((msg1, msg2) => msg1.createdAt - msg2.createdAt)
+      .map((msg) => {
+        return (
+          <IonRow key={msg.id} class={msg.senderId === userId ? 'right-align' : ''}>
+            <IonCol size="auto" class={msg.senderId === userId ? 'my-msg' : 'other-msg'}>
+              {getName(msg.senderId) !== '' ? <b>{getName(msg.senderId)}: </b> : <></>}
+              <span>{msg.content}</span>
+            </IonCol>
+          </IonRow>
+        );
+      });
+  };
+
   return (
     <IonContent class="message-card" ref={contentRef}>
-      <IonGrid class="message-grid">
-        {allMessages
-          .sort((msg1, msg2) => msg1.createdAt - msg2.createdAt)
-          .map((msg) => {
-            return (
-              <IonRow key={msg.id} class={msg.senderId === userId ? 'right-align' : ''}>
-                <IonCol size="auto" class={msg.senderId === userId ? 'my-msg' : 'other-msg'}>
-                  {getName(msg.senderId) !== '' ? <b>{getName(msg.senderId)}: </b> : <></>}
-                  <span>{msg.content}</span>
-                </IonCol>
-              </IonRow>
-            );
-          })}
-      </IonGrid>
+      <IonGrid class="message-grid">{userList.size === 0 ? <span>Loading...</span> : renderMessages()}</IonGrid>
     </IonContent>
   );
 };

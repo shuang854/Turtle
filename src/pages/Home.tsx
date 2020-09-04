@@ -20,9 +20,6 @@ const Home: React.FC = () => {
       requests: [],
       state: { time: 0, isPlaying: false },
     });
-    await db.collection('chats').doc(roomId.id).set({
-      messages: [],
-    });
     await db.collection('playlists').doc(roomId.id).set({
       createdAt: timestamp,
       url: 'https://www.youtube.com/watch?v=XEfDYMngJeE',
@@ -35,6 +32,7 @@ const Home: React.FC = () => {
     // RealTimeDB preparations
     await rtdb.ref('/rooms/' + roomId.id).set({ userCount: 0 });
     await rtdb.ref('/available/' + roomId.id).set({ name: 'Room Name', createdAt: new Date().toISOString() });
+    await rtdb.ref('/chats/' + roomId.id).set({ content: 'created a room.', createdAt: Date.now(), senderId: userId });
     const path = '/room/' + roomId.id;
 
     return history.push(path);

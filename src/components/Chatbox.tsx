@@ -1,7 +1,7 @@
 import { IonCard, IonFabButton, IonFooter, IonIcon, IonInput, IonToolbar } from '@ionic/react';
 import { sendOutline } from 'ionicons/icons';
 import React, { useState } from 'react';
-import { db, arrayUnion } from '../services/firebase';
+import { rtdb } from '../services/firebase';
 import './Chatbox.css';
 import Messages from './Messages';
 import OnlineList from './OnlineList';
@@ -19,16 +19,11 @@ const Chat: React.FC<ChatboxProps> = ({ ownerId, roomId, userId, userList }) => 
   // Send message to database
   const sendMessage = async () => {
     if (message !== '') {
-      await db
-        .collection('chats')
-        .doc(roomId)
-        .update({
-          messages: arrayUnion({
-            createdAt: Date.now(),
-            senderId: userId,
-            content: message,
-          }),
-        });
+      await rtdb.ref('/chats/' + roomId).push({
+        content: message,
+        createdAt: Date.now(),
+        senderId: userId,
+      });
 
       // Reset textarea field
       setMessage('');
