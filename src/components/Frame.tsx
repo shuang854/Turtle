@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import './Frame.css';
 import Messages from './Messages';
 import OnlineList from './OnlineList';
+import About from './About';
 
 type FrameProps = {
   ownerId: string;
@@ -31,6 +32,7 @@ const Frame: React.FC<FrameProps> = ({ ownerId, roomId, userId, userList }) => {
 
       <Messages pane={pane} ownerId={ownerId} roomId={roomId} userId={userId} userList={userList}></Messages>
       <OnlineList pane={pane} userList={userList}></OnlineList>
+      <About pane={pane}></About>
     </IonCard>
   );
 };

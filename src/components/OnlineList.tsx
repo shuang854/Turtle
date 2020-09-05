@@ -1,4 +1,4 @@
-import { IonContent, IonItem, IonLabel, IonList } from '@ionic/react';
+import { IonContent, IonItem, IonLabel, IonList, IonListHeader } from '@ionic/react';
 import React from 'react';
 import './OnlineList.css';
 
@@ -10,6 +10,7 @@ type OnlineListProps = {
 const OnlineList: React.FC<OnlineListProps> = ({ pane, userList }) => {
   return (
     <IonContent style={{ display: pane === 'online' ? null : 'none' }} class="online-content">
+      <IonListHeader class="online-header">Online</IonListHeader>
       <IonList class="online-list">
         {Array.from(userList.values()).map((user) => {
           return (

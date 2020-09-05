@@ -54,7 +54,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId }) => {
             value={videoUrl}
             onSubmit={onSubmit}
           ></IonInput>
-          <IonFabButton slot="end" size="small" onClick={onSubmit}>
+          <IonFabButton disabled={videoUrl === ''} slot="end" size="small" onClick={onSubmit}>
             <IonIcon icon={add}></IonIcon>
           </IonFabButton>
         </>

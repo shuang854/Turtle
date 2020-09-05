@@ -50,6 +50,8 @@
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.0",
+    "@iconify/icons-simple-icons": "^1.0.47",
+    "@iconify/react": "^1.1.3",
     "@types/firebase": "^3.2.1"
   },
   "description": "An Ionic project"
