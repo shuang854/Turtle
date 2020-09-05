@@ -1,7 +1,7 @@
 import { IonCol, IonContent, IonGrid, IonHeader, IonPage, IonRow } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router';
-import Chat from '../components/Chatbox';
+import Frame from '../components/Frame';
 import RoomHeader from '../components/RoomHeader';
 import VideoPlayer from '../components/VideoPlayer';
 import { auth, db, decrement, increment, rtdb } from '../services/firebase';
@@ -155,8 +155,8 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
             <IonCol size="12" sizeLg="9" class="player-col">
               <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId}></VideoPlayer>
             </IonCol>
-            <IonCol size="12" sizeLg="3" class="chat-col">
-              <Chat ownerId={ownerId} roomId={roomId} userId={userId} userList={userList}></Chat>
+            <IonCol size="12" sizeLg="3" class="frame-col">
+              <Frame ownerId={ownerId} roomId={roomId} userId={userId} userList={userList}></Frame>
             </IonCol>
           </IonRow>
         </IonGrid>

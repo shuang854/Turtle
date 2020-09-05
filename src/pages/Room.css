@@ -23,12 +23,12 @@
   height: 100%;
 }
 
-.chat-col {
+.frame-col {
   padding: 0;
 }
 
 @media (max-width: 992px) {
-  .chat-col {
+  .frame-col {
     height: 65%;
   }
 }

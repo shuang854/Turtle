@@ -1,6 +1,6 @@
-.message-card {
+.message-content {
   overflow-y: auto;
-  height: calc(100% - 125px);
+  height: calc(100% - 160px);
   padding: 0;
 }
 
@@ -30,4 +30,41 @@
   max-width: 70%;
   background: var(--ion-color-secondary);
   color: #fff;
+}
+
+.message-toolbar {
+  padding-left: 5px;
+  --background: var(--ion-color-light);
+}
+
+.footer-ios ion-toolbar:first-of-type {
+  padding-top: 5px;
+}
+
+ion-textarea {
+  border: solid 1px #999;
+}
+
+.message-input {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #999;
+  border-radius: 5px;
+  text-align: left;
+}
+
+.send-button {
+  align-self: center;
+  margin: 0 5px 0 5px;
+  --box-shadow: 0 3px 2px -1px rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 576px) {
+  .message-input {
+    border-radius: 10px;
+  }
+
+  .native-input.sc-ion-input-ios {
+    padding-inline-start: 5px;
+  }
 }

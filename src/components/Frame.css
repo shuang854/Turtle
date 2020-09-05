@@ -1,0 +1,12 @@
+.frame-card {
+  background: var(--ion-color-light);
+  height: 100%;
+  width: 100%;
+  float: right;
+  margin: 0;
+}
+
+ion-segment-button {
+  --indicator-transition: transform 100ms cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 40px;
+}

@@ -1,10 +1,22 @@
-import { IonCol, IonContent, IonGrid, IonRow } from '@ionic/react';
+import {
+  IonCol,
+  IonContent,
+  IonFabButton,
+  IonFooter,
+  IonGrid,
+  IonIcon,
+  IonInput,
+  IonRow,
+  IonToolbar,
+} from '@ionic/react';
+import { sendOutline } from 'ionicons/icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { db, arrayUnion, rtdb } from '../services/firebase';
-import './Messages.css';
+import { arrayUnion, db, rtdb } from '../services/firebase';
 import { secondsToTimestamp } from '../services/utilities';
+import './Messages.css';
 
 type MessagesProps = {
+  pane: string;
   ownerId: string;
   roomId: string;
   userId: string;
@@ -18,12 +30,13 @@ type Message = {
   senderId: string;
 };
 
-const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId, userList }) => {
+const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, userList }) => {
   const [joinTime] = useState(Date.now()); // Time at mounting of the component
   const [chats, setChats] = useState<Message[]>([]); // All processed chat messages
   const [systemMessages, setSystemMessages] = useState<Message[]>([]); // All processed system messages
   const [allMessages, setAllMessages] = useState<Message[]>([]); // Combined array of chat and system messages
   const [userHistory] = useState<Map<string, string>>(new Map<string, string>()); // All users who are/were in the room
+  const [message, setMessage] = useState(''); // Message to be sent
   const contentRef = useRef<HTMLIonContentElement>(null);
 
   // Send 'joined room' message on component mount
@@ -41,12 +54,14 @@ const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId, userList }
       let arr: Message[] = [];
       snapshot.forEach((child) => {
         const msg = child.val();
-        arr.push({
-          content: msg.content,
-          createdAt: msg.createdAt,
-          id: msg.senderId + msg.createdAt,
-          senderId: msg.senderId,
-        });
+        if (msg.createdAt > joinTime) {
+          arr.push({
+            content: msg.content,
+            createdAt: msg.createdAt,
+            id: msg.senderId + msg.createdAt,
+            senderId: msg.senderId,
+          });
+        }
       });
       setChats(arr);
     });
@@ -133,6 +148,26 @@ const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId, userList }
     return name;
   };
 
+  // Send message to database
+  const sendMessage = async () => {
+    if (message !== '') {
+      await rtdb.ref('/chats/' + roomId).push({
+        content: message,
+        createdAt: Date.now(),
+        senderId: userId,
+      });
+
+      // Reset textarea field
+      setMessage('');
+    }
+  };
+
+  const onEnter = (e: React.KeyboardEvent<HTMLIonInputElement>) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  };
+
   const renderMessages = () => {
     return allMessages
       .sort((msg1, msg2) => msg1.createdAt - msg2.createdAt)
@@ -153,9 +188,26 @@ const Messages: React.FC<MessagesProps> = ({ ownerId, roomId, userId, userList }
   };
 
   return (
-    <IonContent class="message-card" ref={contentRef}>
-      <IonGrid class="message-grid">{userList.size === 0 ? <span>Loading...</span> : renderMessages()}</IonGrid>
-    </IonContent>
+    <>
+      <IonContent style={{ display: pane === 'chat' ? null : 'none' }} class="message-content" ref={contentRef}>
+        <IonGrid class="message-grid">{userList.size === 0 ? <span>Loading...</span> : renderMessages()}</IonGrid>
+      </IonContent>
+      <IonFooter style={{ display: pane === 'chat' ? null : 'none' }}>
+        <IonToolbar class="message-toolbar">
+          <IonInput
+            onIonChange={(e) => setMessage(e.detail.value!)}
+            onKeyDown={(e) => onEnter(e)}
+            value={message}
+            placeholder="Send message"
+            enterkeyhint="send"
+            class="message-input"
+          ></IonInput>
+          <IonFabButton slot="end" size="small" onClick={sendMessage} class="send-button">
+            <IonIcon icon={sendOutline}></IonIcon>
+          </IonFabButton>
+        </IonToolbar>
+      </IonFooter>
+    </>
   );
 };
 
