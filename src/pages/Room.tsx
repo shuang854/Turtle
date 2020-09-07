@@ -4,7 +4,7 @@ import { RouteComponentProps, useHistory } from 'react-router';
 import Frame from '../components/Frame';
 import RoomHeader from '../components/RoomHeader';
 import VideoPlayer from '../components/VideoPlayer';
-import { auth, db, decrement, increment, rtdb } from '../services/firebase';
+import { auth, db, decrement, increment, rtdb, arrayUnion } from '../services/firebase';
 import { generateAnonName } from '../services/utilities';
 import './Room.css';
 
@@ -18,24 +18,6 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
   const [userList, setUserList] = useState<Map<string, string>>(new Map<string, string>());
-
-  // Handle logging in
-  useEffect(() => {
-    const authUnsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        const credential = await auth.signInAnonymously();
-        await db.collection('users').doc(credential.user?.uid).set({
-          name: generateAnonName(),
-        });
-      }
-    });
-
-    return () => {
-      authUnsubscribe();
-    };
-  }, []);
 
   // Verify that the roomId exists in db
   useEffect(() => {
@@ -52,6 +34,26 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
 
     fetchRoomAndVid();
   }, [history, roomId]);
+
+  // Handle logging in
+  useEffect(() => {
+    if (validRoom) {
+      const authUnsubscribe = auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          setUserId(user.uid);
+        } else {
+          const credential = await auth.signInAnonymously();
+          await db.collection('users').doc(credential.user?.uid).set({
+            name: generateAnonName(),
+          });
+        }
+      });
+
+      return () => {
+        authUnsubscribe();
+      };
+    }
+  }, [validRoom]);
 
   // Subscribe RealTimeDB listeners
   useEffect(() => {
@@ -76,6 +78,12 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
             const username = (await db.collection('users').doc(userId).get()).data()?.name;
             await roomRef.child(userId).set({ name: username });
             await roomRef.update({ userCount: increment });
+            await db
+              .collection('rooms')
+              .doc(roomId)
+              .update({
+                requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'join' }),
+              });
           }
         });
 

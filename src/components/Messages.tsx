@@ -11,7 +11,7 @@ import {
 } from '@ionic/react';
 import { sendOutline } from 'ionicons/icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { arrayUnion, db, rtdb } from '../services/firebase';
+import { db, rtdb } from '../services/firebase';
 import { secondsToTimestamp } from '../services/utilities';
 import './Messages.css';
 
@@ -39,15 +39,6 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
   const [message, setMessage] = useState(''); // Message to be sent
   const contentRef = useRef<HTMLIonContentElement>(null);
 
-  // Send 'joined room' message on component mount
-  useEffect(() => {
-    db.collection('rooms')
-      .doc(roomId)
-      .update({
-        requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'join' }),
-      });
-  }, [roomId, userId]);
-
   // Listen for new chat messages
   useEffect(() => {
     rtdb.ref('/chats/' + roomId).on('value', (snapshot) => {
@@ -70,22 +61,6 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
       rtdb.ref('/chats/' + roomId).off('value');
     };
   }, [roomId, joinTime]);
-
-  // Convert request type to message content
-  const processType = (type: string, time: number): string => {
-    switch (type) {
-      case 'change':
-        return 'changed the video.';
-      case 'join':
-        return 'joined the room.';
-      case 'pause':
-        return 'paused the video at ' + secondsToTimestamp(time);
-      case 'play':
-        return 'played the video from ' + secondsToTimestamp(time);
-      default:
-        return '';
-    }
-  };
 
   // Listen for new system messages
   useEffect(() => {
@@ -117,6 +92,22 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
     };
   }, [roomId, joinTime]);
 
+  // Convert request type to message content
+  const processType = (type: string, time: number): string => {
+    switch (type) {
+      case 'change':
+        return 'changed the video.';
+      case 'join':
+        return 'joined the room.';
+      case 'pause':
+        return 'paused the video at ' + secondsToTimestamp(time);
+      case 'play':
+        return 'played the video from ' + secondsToTimestamp(time);
+      default:
+        return '';
+    }
+  };
+
   // Maintain list of users who entered the room, in order to keep all sender names of messages in the room
   useEffect(() => {
     userList.forEach((name: string, id: string) => {
@@ -137,7 +128,7 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
     setTimeout(() => {
       content?.scrollToBottom(200);
     }, 100);
-  }, [allMessages]);
+  }, [allMessages, pane]);
 
   // Retrieve display name from userId
   const getName = (id: string) => {
