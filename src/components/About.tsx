@@ -29,7 +29,9 @@ const About: React.FC<AboutProps> = ({ pane }) => {
           </IonRouterLink>
         </IonCol>
         <IonCol size="3">
-          <Icon icon={discordIcon} className="about-icons"></Icon>
+          <IonRouterLink href="https://discord.gg/NEw3Msu" target="_blank">
+            <Icon icon={discordIcon} className="about-icons"></Icon>
+          </IonRouterLink>
         </IonCol>
         <IonCol size="3"></IonCol>
       </IonRow>
