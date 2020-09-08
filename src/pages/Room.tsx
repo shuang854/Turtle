@@ -1,10 +1,10 @@
 import { IonCol, IonContent, IonGrid, IonHeader, IonPage, IonRow } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router';
-import Chat from '../components/Chatbox';
+import Frame from '../components/Frame';
 import RoomHeader from '../components/RoomHeader';
 import VideoPlayer from '../components/VideoPlayer';
-import { auth, db, decrement, increment, rtdb } from '../services/firebase';
+import { auth, db, decrement, increment, rtdb, arrayUnion } from '../services/firebase';
 import { generateAnonName } from '../services/utilities';
 import './Room.css';
 
@@ -17,9 +17,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const [ownerId, setOwnerId] = useState('undefined');
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
-  const [videoId, setVideoId] = useState('');
-  const [stateId, setStateId] = useState('');
-  const [userList, setUserList] = useState<string[]>(['']);
+  const [userList, setUserList] = useState<Map<string, string>>(new Map<string, string>());
 
   // Verify that the roomId exists in db
   useEffect(() => {
@@ -29,16 +27,6 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
       if (!room.exists) {
         history.push('/');
       } else {
-        // Set videoId for RoomHeader component
-        const playlistSnapshot = await roomRef.collection('playlist').get();
-        const vidId = playlistSnapshot.docs[0].id;
-        setVideoId(vidId);
-
-        // Set stateId for VideoPlayer component
-        const stateSnapshot = await roomRef.collection('states').get();
-        const vidStateId = stateSnapshot.docs[0].id;
-        setStateId(vidStateId);
-
         setOwnerId(room.data()?.ownerId);
         setValidRoom(true);
       }
@@ -49,23 +37,25 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
 
   // Handle logging in
   useEffect(() => {
-    const authUnsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        const credential = await auth.signInAnonymously();
-        await db.collection('users').doc(credential.user?.uid).set({
-          name: generateAnonName(),
-        });
-      }
-    });
+    if (validRoom) {
+      const authUnsubscribe = auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          setUserId(user.uid);
+        } else {
+          const credential = await auth.signInAnonymously();
+          await db.collection('users').doc(credential.user?.uid).set({
+            name: generateAnonName(),
+          });
+        }
+      });
 
-    return () => {
-      authUnsubscribe();
-    };
-  }, []);
+      return () => {
+        authUnsubscribe();
+      };
+    }
+  }, [validRoom]);
 
-  // Subscribe listeners
+  // Subscribe RealTimeDB listeners
   useEffect(() => {
     if (userId !== '' && validRoom) {
       const populateRoom = () => {
@@ -75,19 +65,25 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         // Keep track of online user presence in realtime database rooms
         roomRef.on('value', async (snapshot) => {
           // Populate list of users in a room
-          const set: string[] = [];
+          const map: Map<string, string> = new Map<string, string>();
           snapshot.forEach((childSnapshot) => {
-            if (childSnapshot.key !== 'userCount') {
-              set.push(childSnapshot.child('name').val());
+            if (childSnapshot.key !== null && childSnapshot.key !== 'userCount') {
+              map.set(childSnapshot.key, childSnapshot.child('name').val());
             }
           });
-          setUserList(set);
+          setUserList(map);
 
           if (!snapshot.hasChild(userId)) {
             // Keep userId in the room as long as a connection from the client exists
             const username = (await db.collection('users').doc(userId).get()).data()?.name;
             await roomRef.child(userId).set({ name: username });
             await roomRef.update({ userCount: increment });
+            await db
+              .collection('rooms')
+              .doc(roomId)
+              .update({
+                requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'join' }),
+              });
           }
         });
 
@@ -126,10 +122,11 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   // Handle disconnect events
   useEffect(() => {
     if (!loading && userId !== '' && validRoom) {
-      const depopulateRoom = async () => {
+      const depopulate = async () => {
         const refUser = rtdb.ref('/rooms/' + roomId + '/' + userId);
         const refRoom = rtdb.ref('/rooms/' + roomId);
         const refAvailable = rtdb.ref('/available/' + roomId);
+        const refChat = rtdb.ref('/chats/' + roomId);
 
         // Always remove user from room on disconnect
         await refRoom.onDisconnect().update({ userCount: decrement });
@@ -139,22 +136,24 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         if (userCount <= 1) {
           await refRoom.onDisconnect().remove();
           await refAvailable.onDisconnect().remove();
+          await refChat.onDisconnect().remove();
         } else {
-          await refRoom.onDisconnect().cancel(); // Cancels all disconnect actions at and under refRoom
+          await refRoom.onDisconnect().cancel(); // Cancel all disconnect actions
           await refAvailable.onDisconnect().cancel();
+          await refChat.onDisconnect().cancel();
           await refRoom.onDisconnect().update({ userCount: decrement }); // User disconnect still needs to be handled
           await refUser.onDisconnect().remove();
         }
       };
 
-      depopulateRoom();
+      depopulate();
     }
   }, [userId, validRoom, roomId, loading, userCount]);
 
   return (
     <IonPage>
       <IonHeader>
-        <RoomHeader roomId={roomId} videoId={videoId} ownerId={ownerId} userId={userId}></RoomHeader>
+        <RoomHeader roomId={roomId} ownerId={ownerId} userId={userId}></RoomHeader>
       </IonHeader>
       {loading ? (
         <IonContent className="ion-padding">Loading...</IonContent>
@@ -162,10 +161,10 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         <IonGrid class="room-grid">
           <IonRow class="room-row">
             <IonCol size="12" sizeLg="9" class="player-col">
-              <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId} stateId={stateId}></VideoPlayer>
+              <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId}></VideoPlayer>
             </IonCol>
-            <IonCol size="12" sizeLg="3" class="chat-col">
-              <Chat ownerId={ownerId} roomId={roomId} userId={userId} userList={userList}></Chat>
+            <IonCol size="12" sizeLg="3" class="frame-col">
+              <Frame ownerId={ownerId} roomId={roomId} userId={userId} userList={userList}></Frame>
             </IonCol>
           </IonRow>
         </IonGrid>

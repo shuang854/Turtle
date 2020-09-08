@@ -1,0 +1,21 @@
+.about-grid {
+  margin-top: 50px;
+  max-width: 500px;
+  font-size: 20px;
+  font-style: bold;
+  color: var(--ion-color-secondary);
+  text-align: center;
+}
+
+.externals-row {
+  margin-top: 25px;
+}
+
+.about-icons {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  top: 0;
+  cursor: pointer;
+  color: var(--ion-color-secondary);
+}

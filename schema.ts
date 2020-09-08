@@ -1,38 +1,42 @@
 // Database schema
 
+/**
+ * Notes:
+ * - hierarchy consists of many collections, but shallow depth in each collection. This works nicely with subscribing
+ *   listeners in useEffect. Also if collections are combined, single document updates may become too frequent.
+ */
+
 // Firestore
 const collection = {
+  playlists: [
+    {
+      roomId: {
+        createdAt: 'timestamp',
+        url: 'https://youtube.com',
+      },
+    },
+  ],
   rooms: [
     {
       roomId: {
         createdAt: 'timestamp',
         ownerId: 'userId',
-        messages: [
+        requests: [
           {
-            messageId: {
-              createdAt: 'timestamp',
-              content: 'Message content',
-              senderId: 'userId',
-              type: 'type',
-            },
+            createdAt: 'timestamp',
+            time: '01:25:44', // Relevant for 'play', 'pause' types
+            type: 'updateState',
+            senderId: 'userId',
           },
         ],
-        playlist: [
-          {
-            videoId: {
-              createdAt: 'timestamp',
-              url: 'https://youtube.com',
-            },
-          },
-        ],
-        states: [
-          {
-            stateId: {
-              time: 'timestamp',
-              isPlaying: true,
-            },
-          },
-        ],
+      },
+    },
+  ],
+  states: [
+    {
+      roomId: {
+        time: 'timestamp',
+        isPlaying: true,
       },
     },
   ],
@@ -51,6 +55,17 @@ const turtle = {
   available: {
     roomId: {
       createdAt: '2020-08-12T00:13:16.273Z',
+    },
+  },
+
+  // Keep chats in Realtime DB could potentially lower cost
+  chats: {
+    roomId: {
+      messageId: {
+        content: 'Message content',
+        senderId: 'userId',
+        createdAt: 'timestamp',
+      },
     },
   },
 

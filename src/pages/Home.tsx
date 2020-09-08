@@ -13,29 +13,31 @@ const Home: React.FC = () => {
 
   // Populate both Firestore and RealTimeDB before navigating to room
   const createRoom = async () => {
+    // Firestore preparations
     const roomId = await db.collection('rooms').add({
       createdAt: timestamp,
       ownerId: userId,
+      requests: [],
+      state: { time: 0, isPlaying: false },
     });
-
-    const roomRef = db.collection('rooms').doc(roomId.id);
-    await roomRef.collection('playlist').add({
+    await db.collection('playlists').doc(roomId.id).set({
       createdAt: timestamp,
-      url: 'https://www.youtube.com/watch?v=XEfDYMngJeE',
+      url: 'https://www.youtube.com/watch?v=DGQwd1_dpuc',
     });
-
-    await roomRef.collection('states').add({
-      time: 0,
+    await db.collection('states').doc(roomId.id).set({
       isPlaying: false,
+      time: 0,
     });
 
+    // RealTimeDB preparations
     await rtdb.ref('/rooms/' + roomId.id).set({ userCount: 0 });
     await rtdb.ref('/available/' + roomId.id).set({ name: 'Room Name', createdAt: new Date().toISOString() });
     const path = '/room/' + roomId.id;
+
     return history.push(path);
   };
 
-  // Sign in anonymously before showing Create Room button
+  // Sign in anonymously before finishing loading page content
   useEffect(() => {
     const authUnsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {

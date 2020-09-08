@@ -1,22 +1,21 @@
-.online-button {
-  margin: 0 4px 0 0;
-  align-self: center;
-  --box-shadow: 0 3px 2px -1px rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+.online-content {
+  height: calc(100% - 160px);
 }
 
-.popover-list {
-  padding-top: 2px;
-}
-
-.list-header {
-  font-size: 24px;
+.online-header {
   color: var(--ion-color-primary);
-  border-bottom: 1px solid #999;
+  font-size: 20px;
+}
+
+.online-list {
+  padding-top: 0;
+  padding-bottom: 4px;
 }
 
 .online-item {
   --padding-start: 12px;
   --min-height: 0;
+  color: var(--ion-color-secondary);
 }
 
 .online-label {
