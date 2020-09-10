@@ -3,26 +3,47 @@
 }
 
 .online-header {
+  border-bottom: 1px solid var(--ion-color-primary);
   color: var(--ion-color-primary);
   font-size: 20px;
+  align-items: center;
 }
 
 .online-list {
   padding-top: 0;
-  padding-bottom: 4px;
+  padding-bottom: 0;
 }
 
 .online-item {
   --padding-start: 12px;
-  --min-height: 0;
+  --min-height: 30px;
   color: var(--ion-color-secondary);
 }
 
 .online-label {
-  margin-top: 8px;
+  margin-top: 0;
   margin-bottom: 0;
 }
 
-ion-backdrop {
-  cursor: default;
+.clipboard-col {
+  position: absolute;
+  bottom: 0;
+  padding: 0;
+}
+
+.clipboard-toolbar {
+  max-width: 428px;
+  margin-left: 12px;
+  padding-right: 16px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  --padding-start: 0;
+}
+
+.clipboard-input {
+  border-radius: 5px;
+  border: 1px solid var(--ion-color-secondary);
+  max-width: 360px;
+  text-align: left;
 }
