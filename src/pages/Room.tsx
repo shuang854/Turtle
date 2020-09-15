@@ -4,7 +4,7 @@ import { RouteComponentProps, useHistory } from 'react-router';
 import Frame from '../components/Frame';
 import RoomHeader from '../components/RoomHeader';
 import VideoPlayer from '../components/VideoPlayer';
-import { auth, db, decrement, increment, rtdb, arrayUnion } from '../services/firebase';
+import { auth, db, decrement, increment, rtdb } from '../services/firebase';
 import { generateAnonName } from '../services/utilities';
 import './Room.css';
 
@@ -16,8 +16,8 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
   const [userId, setUserId] = useState('');
   const [ownerId, setOwnerId] = useState('undefined');
   const [loading, setLoading] = useState(true);
-  const [userCount, setUserCount] = useState(0);
   const [userList, setUserList] = useState<Map<string, string>>(new Map<string, string>());
+  const [joinTime] = useState(Date.now()); // Time at mounting of the component
 
   // Verify that the roomId exists in db
   useEffect(() => {
@@ -77,27 +77,26 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
             // Keep userId in the room as long as a connection from the client exists
             const username = (await db.collection('users').doc(userId).get()).data()?.name;
             await roomRef.child(userId).set({ name: username });
-            await roomRef.update({ userCount: increment });
-            await db
-              .collection('rooms')
-              .doc(roomId)
-              .update({
-                requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'join' }),
-              });
+
+            roomRef.child(userId).onDisconnect().cancel(); // Clear any disconnect actions in case any are queued
+            roomRef.child(userId).onDisconnect().remove(); // Remove userId from the room when disconnect happens
           }
         });
 
-        roomRef.child('userCount').on('value', (snapshot) => {
-          setUserCount(snapshot.val());
+        // Manage user count
+        rtdb.ref('.info/connected').on('value', (snapshot) => {
+          if (snapshot.val() === true) {
+            roomRef.update({ userCount: increment });
+            roomRef.onDisconnect().update({ userCount: decrement });
+          }
         });
 
-        // Re-add room into /available/ if the room was deleted
-        availableRef.on('value', async (snapshot) => {
-          if (!snapshot.hasChild(roomId)) {
-            await availableRef.child(roomId).set({
-              name: 'Room Name',
-              createdAt: new Date().toISOString(),
-            });
+        // Remove room availability when the last person leaves
+        roomRef.child('userCount').on('value', (snapshot) => {
+          if (snapshot.val() <= 1) {
+            availableRef.onDisconnect().remove();
+          } else {
+            availableRef.onDisconnect().cancel();
           }
         });
 
@@ -119,37 +118,6 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
     }
   }, [userId, validRoom, roomId]);
 
-  // Handle disconnect events
-  useEffect(() => {
-    if (!loading && userId !== '' && validRoom) {
-      const depopulate = async () => {
-        const refUser = rtdb.ref('/rooms/' + roomId + '/' + userId);
-        const refRoom = rtdb.ref('/rooms/' + roomId);
-        const refAvailable = rtdb.ref('/available/' + roomId);
-        const refChat = rtdb.ref('/chats/' + roomId);
-
-        // Always remove user from room on disconnect
-        await refRoom.onDisconnect().update({ userCount: decrement });
-        await refUser.onDisconnect().remove();
-
-        // Remove the room if the leaving user is the last in the room
-        if (userCount <= 1) {
-          await refRoom.onDisconnect().remove();
-          await refAvailable.onDisconnect().remove();
-          await refChat.onDisconnect().remove();
-        } else {
-          await refRoom.onDisconnect().cancel(); // Cancel all disconnect actions
-          await refAvailable.onDisconnect().cancel();
-          await refChat.onDisconnect().cancel();
-          await refRoom.onDisconnect().update({ userCount: decrement }); // User disconnect still needs to be handled
-          await refUser.onDisconnect().remove();
-        }
-      };
-
-      depopulate();
-    }
-  }, [userId, validRoom, roomId, loading, userCount]);
-
   return (
     <IonPage>
       <IonHeader>
@@ -164,7 +132,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
               <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId}></VideoPlayer>
             </IonCol>
             <IonCol size="12" sizeLg="3" class="frame-col">
-              <Frame ownerId={ownerId} roomId={roomId} userId={userId} userList={userList}></Frame>
+              <Frame ownerId={ownerId} roomId={roomId} userId={userId} userList={userList} joinTime={joinTime}></Frame>
             </IonCol>
           </IonRow>
         </IonGrid>

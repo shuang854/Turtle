@@ -11,6 +11,25 @@ const Home: React.FC = () => {
 
   let history = useHistory();
 
+  // Sign in anonymously before finishing loading page content
+  useEffect(() => {
+    const authUnsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setUserId(user.uid);
+        setLoading(false);
+      } else {
+        const credential = await auth.signInAnonymously();
+        await db.collection('users').doc(credential.user?.uid).set({
+          name: generateAnonName(),
+        });
+      }
+    });
+
+    return () => {
+      authUnsubscribe();
+    };
+  }, []);
+
   // Populate both Firestore and RealTimeDB before navigating to room
   const createRoom = async () => {
     // Firestore preparations
@@ -36,25 +55,6 @@ const Home: React.FC = () => {
 
     return history.push(path);
   };
-
-  // Sign in anonymously before finishing loading page content
-  useEffect(() => {
-    const authUnsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        setUserId(user.uid);
-        setLoading(false);
-      } else {
-        const credential = await auth.signInAnonymously();
-        await db.collection('users').doc(credential.user?.uid).set({
-          name: generateAnonName(),
-        });
-      }
-    });
-
-    return () => {
-      authUnsubscribe();
-    };
-  }, []);
 
   return (
     <IonPage>

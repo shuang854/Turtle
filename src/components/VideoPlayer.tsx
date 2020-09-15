@@ -16,18 +16,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
   const [allowUpdate, setAllowUpdate] = useState(true);
 
   // Update database on play (owner only)
-  const onPlay = async () => {
+  const onPlay = () => {
     setPlaying(true);
     if (ownerId === userId) {
       const currTime = player.current?.getCurrentTime();
       if (currTime !== undefined) {
-        await db.collection('states').doc(roomId).update({
+        db.collection('states').doc(roomId).update({
           isPlaying: true,
           time: currTime,
         });
 
-        await db
-          .collection('rooms')
+        db.collection('rooms')
           .doc(roomId)
           .update({
             requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: currTime, type: 'play' }),
@@ -37,18 +36,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
   };
 
   // Update database on pause (owner only)
-  const onPause = async () => {
+  const onPause = () => {
     setPlaying(false);
     if (ownerId === userId) {
       const currTime = player.current?.getCurrentTime();
       if (currTime !== undefined) {
-        await db.collection('states').doc(roomId).update({
+        db.collection('states').doc(roomId).update({
           isPlaying: false,
           time: currTime,
         });
 
-        await db
-          .collection('rooms')
+        db.collection('rooms')
           .doc(roomId)
           .update({
             requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: currTime, type: 'pause' }),

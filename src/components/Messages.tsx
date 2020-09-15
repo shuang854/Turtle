@@ -21,6 +21,7 @@ type MessagesProps = {
   roomId: string;
   userId: string;
   userList: Map<string, string>;
+  joinTime: number;
 };
 
 type Message = {
@@ -30,8 +31,7 @@ type Message = {
   senderId: string;
 };
 
-const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, userList }) => {
-  const [joinTime] = useState(Date.now()); // Time at mounting of the component
+const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, userList, joinTime }) => {
   const [chats, setChats] = useState<Message[]>([]); // All processed chat messages
   const [systemMessages, setSystemMessages] = useState<Message[]>([]); // All processed system messages
   const [allMessages, setAllMessages] = useState<Message[]>([]); // Combined array of chat and system messages
