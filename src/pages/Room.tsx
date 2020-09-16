@@ -60,7 +60,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
     if (userId !== '' && validRoom) {
       const populateRoom = () => {
         const roomRef = rtdb.ref('/rooms/' + roomId);
-        const availableRef = rtdb.ref('/available/');
+        const availableRef = rtdb.ref('/available/' + roomId);
 
         // Keep track of online user presence in realtime database rooms
         roomRef.on('value', async (snapshot) => {
@@ -105,8 +105,8 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         // Unsubscribe listeners
         return () => {
           roomRef.off('value');
+          rtdb.ref('.info/connected').off('value');
           roomRef.child('userCount').off('value');
-          availableRef.off('child_removed');
         };
       };
 

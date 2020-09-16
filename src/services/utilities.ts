@@ -4,12 +4,19 @@ const adjectives = [
   'Adamant',
   'Adorable',
   'Anxious',
+  'Awesome',
+  'Barbarous',
   'Bent',
   'Bright',
+  'Careful',
+  'Clean',
   'Coherent',
   'Curious',
   'Diligent',
+  'Disastrous',
   'Earthy',
+  'Erratic',
+  'Famous',
   'Fascinated',
   'Foreign',
   'Hateful',
@@ -22,35 +29,48 @@ const adjectives = [
   'Naughty',
   'Neat',
   'Nifty',
+  'Nostalgic',
   'Parallel',
   'Quack',
+  'Questionable',
   'Roomy',
   'Sedate',
   'Sharp',
   'Silent',
+  'Terrible',
   'Unequal',
 ];
 
 const animals = [
-  'Chimpanzee',
-  'Bison',
-  'Squirrel',
-  'Lemur',
-  'Wolf',
-  'Dingo',
-  'Colt',
-  'Seal',
-  'Cougar',
-  'Ram',
-  'Parakeet',
-  'Goat',
   'Ape',
   'Basilisk',
-  'Oryx',
+  'Bison',
+  'Chameleon',
+  'Chimpanzee',
+  'Chinchilla',
+  'Chipmunk',
+  'Colt',
+  'Cougar',
+  'Cow',
+  'Dingo',
+  'Fawn',
+  'Fish',
+  'Goat',
   'Iguana',
-  'Stallion',
   'Jackal',
+  'Lemur',
+  'Lion',
+  'Moose',
+  'Ocelot',
+  'Opossum',
+  'Oryx',
+  'Parakeet',
+  'Ram',
+  'Seal',
   'Snake',
+  'Squirrel',
+  'Stallion',
+  'Wolf',
   'Zebra',
 ];
 
@@ -69,8 +89,8 @@ const animals = [
 // };
 
 export const generateAnonName = (): string => {
-  const adj: string = adjectives[Math.floor(Math.random() * 30)];
-  const animal: string = animals[Math.floor(Math.random() * 20)];
+  const adj: string = adjectives[Math.floor(Math.random() * 40)];
+  const animal: string = animals[Math.floor(Math.random() * 30)];
   return adj + ' ' + animal;
 };
 

@@ -15,7 +15,7 @@ const About: React.FC<AboutProps> = ({ pane }) => {
     <IonGrid style={{ display: pane === 'about' ? null : 'none' }} class="about-grid">
       <IonRow>
         <IonCol>
-          <span>Any feedback is welcome! </span>
+          <span>Any feedback, questions, or issues? </span>
           <span role="img" aria-label="Turtle">
             🐢🐢
           </span>
