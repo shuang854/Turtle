@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+  "name": "Turtle",
+  "description": "Allows syncing shows/movies of subscription services",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "permissions": ["webRequest", "webRequestBlocking", "<all_urls>"],
+  "version": "1.0",
+  "icons": {
+    "48": "icon_48.png"
+  }
+}
