@@ -3,8 +3,17 @@
   "name": "Turtle",
   "description": "Allows syncing shows/movies of subscription services",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background.js"],
+    "persistent": true
   },
+  "content_scripts": [
+    {
+      "matches": ["https://www.netflix.com/*"],
+      "js": ["player.js"],
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": ["netflix.js"],
   "permissions": ["webRequest", "webRequestBlocking", "<all_urls>"],
   "version": "1.0",
   "icons": {
