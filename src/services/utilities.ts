@@ -88,6 +88,16 @@ const animals = [
 //   MATCH_URL_VIDYARD: /vidyard.com\/(?:watch\/)?([a-zA-Z0-9-]+)/,
 // };
 
+const MATCH_URL_NETFLIX = /https?:\/\/(www\.)?netflix\.com\/watch\/([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
+
+export const matchUrl = (url: string) => {
+  if (!!url.match(MATCH_URL_NETFLIX)) {
+    return 'NETFLIX';
+  } else {
+    return 'DEFAULT';
+  }
+};
+
 export const generateAnonName = (): string => {
   const adj: string = adjectives[Math.floor(Math.random() * 40)];
   const animal: string = animals[Math.floor(Math.random() * 30)];

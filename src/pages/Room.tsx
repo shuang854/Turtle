@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router';
 import Frame from '../components/Frame';
 import RoomHeader from '../components/RoomHeader';
-import VideoPlayer from '../components/VideoPlayer';
+import VideoPlayer from '../components/Player/VideoPlayer';
 import { auth, db, decrement, increment, rtdb } from '../services/firebase';
 import { generateAnonName } from '../services/utilities';
 import './Room.css';
@@ -84,10 +84,14 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         });
 
         // Manage user count
-        rtdb.ref('.info/connected').on('value', (snapshot) => {
+        rtdb.ref('.info/connected').on('value', async (snapshot) => {
           if (snapshot.val() === true) {
-            roomRef.update({ userCount: increment });
-            roomRef.onDisconnect().update({ userCount: decrement });
+            try {
+              await roomRef.update({ userCount: increment });
+              await roomRef.onDisconnect().update({ userCount: decrement });
+            } catch (err) {
+              console.log(err);
+            }
           }
         });
 
@@ -129,7 +133,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
         <IonGrid class="room-grid">
           <IonRow class="room-row">
             <IonCol size="12" sizeLg="9" class="player-col">
-              <VideoPlayer ownerId={ownerId} userId={userId} roomId={roomId}></VideoPlayer>
+              <VideoPlayer roomId={roomId} ownerId={ownerId} userId={userId}></VideoPlayer>
             </IonCol>
             <IonCol size="12" sizeLg="3" class="frame-col">
               <Frame ownerId={ownerId} roomId={roomId} userId={userId} userList={userList} joinTime={joinTime}></Frame>

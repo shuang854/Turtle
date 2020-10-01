@@ -26,7 +26,6 @@ chrome.webRequest.onHeadersReceived.addListener(
             header.value += '\n';
           }
         }
-        //console.log(header.value);
 
         headers[index].value = header.value;
       }

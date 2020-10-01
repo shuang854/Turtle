@@ -1,19 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { db, arrayUnion } from '../services/firebase';
-import { SYNC_MARGIN } from '../services/utilities';
+import { arrayUnion, db } from '../../services/firebase';
+import { SYNC_MARGIN } from '../../services/utilities';
 
-type VideoPlayerProps = {
+type ReactPlayerFrameProps = {
   ownerId: string;
   userId: string;
   roomId: string;
+  videoUrl: string;
 };
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) => {
+const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, roomId, videoUrl }) => {
   const player = useRef<ReactPlayer>(null);
   const [playing, setPlaying] = useState(false);
-  const [videoUrl, setVideoUrl] = useState('');
-  const [allowUpdate, setAllowUpdate] = useState(true);
 
   // Update database on play (owner only)
   const onPlay = () => {
@@ -55,55 +54,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
     }
   };
 
-  // Request an update after buffering is finished (member only)
-  const onBufferEnd = () => {
-    if (ownerId !== userId) {
-      db.collection('rooms')
-        .doc(roomId)
-        .update({
-          requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'updateState' }),
-        });
-    }
-  };
-
-  // Subscribe member only listener
-  useEffect(() => {
-    if (ownerId !== userId) {
-      const stateRef = db.collection('states').doc(roomId);
-      const roomRef = db.collection('rooms').doc(roomId);
-
-      // Add a listener to 'states' collection, listening for video state changes
-      const stateUnsubscribe = stateRef.onSnapshot((docSnapshot) => {
-        const docData = docSnapshot.data();
-
-        const currTime = player.current?.getCurrentTime();
-        if (currTime !== undefined) {
-          const realPlayState: boolean = docData?.isPlaying;
-          const realTimeState: number = docData?.time;
-          setPlaying(realPlayState);
-
-          if (allowUpdate && Math.abs(currTime - realTimeState) > SYNC_MARGIN / 1000 && realPlayState) {
-            setAllowUpdate(false);
-            setTimeout(() => {
-              // throttle update requests
-              setAllowUpdate(true);
-            }, 3000);
-
-            player.current?.seekTo(realTimeState);
-            roomRef.update({
-              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'updateState' }),
-            });
-          }
-        }
-      });
-
-      return () => {
-        stateUnsubscribe();
-      };
-    }
-  }, [ownerId, roomId, userId, allowUpdate]);
-
-  // Subscribe owner only listener
+  // Listen for requests from Firebase (owner only)
   useEffect(() => {
     if (ownerId === userId) {
       const roomRef = db.collection('rooms').doc(roomId);
@@ -119,7 +70,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
           if (currTime !== undefined) {
             stateRef.update({
               time: currTime,
-              isPlaying: true,
+              isPlaying: player.current?.props.playing,
             });
           }
         }
@@ -131,20 +82,54 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
     }
   }, [ownerId, roomId, userId]);
 
-  // Listen for video URL changes
-  useEffect(() => {
-    const playlistRef = db.collection('playlists').doc(roomId);
-    const playlistUnsubscribe = playlistRef.onSnapshot((docSnapshot) => {
-      const data = docSnapshot.data();
-      if (data !== undefined) {
-        setVideoUrl(data.url);
-      }
-    });
+  // Request an update after buffering is finished (member only)
+  const onBufferEnd = () => {
+    if (ownerId !== userId) {
+      db.collection('rooms')
+        .doc(roomId)
+        .update({
+          requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'updateState' }),
+        });
+    }
+  };
 
-    return () => {
-      playlistUnsubscribe();
-    };
-  }, [roomId]);
+  // Listen for changes in video state from Firebase (member only)
+  useEffect(() => {
+    if (ownerId !== userId) {
+      const stateRef = db.collection('states').doc(roomId);
+      const roomRef = db.collection('rooms').doc(roomId);
+      let allowUpdate = true;
+
+      // listen to 'states' collection for video state changes from owner
+      const stateUnsubscribe = stateRef.onSnapshot((docSnapshot) => {
+        const docData = docSnapshot.data();
+
+        const currTime = player.current?.getCurrentTime();
+        if (currTime !== undefined) {
+          const realPlayState: boolean = docData?.isPlaying;
+          const realTimeState: number = docData?.time;
+          setPlaying(realPlayState);
+
+          if (allowUpdate && Math.abs(currTime - realTimeState) > SYNC_MARGIN / 1000 && realPlayState) {
+            allowUpdate = false;
+            setTimeout(() => {
+              // Throttle update requests
+              allowUpdate = true;
+            }, 5000);
+
+            player.current?.seekTo(realTimeState);
+            roomRef.update({
+              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'updateState' }),
+            });
+          }
+        }
+      });
+
+      return () => {
+        stateUnsubscribe();
+      };
+    }
+  }, [ownerId, roomId, userId]);
 
   return (
     <ReactPlayer
@@ -169,4 +154,4 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ ownerId, userId, roomId }) =>
   );
 };
 
-export default VideoPlayer;
+export default ReactPlayerFrame;
