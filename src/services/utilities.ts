@@ -88,6 +88,7 @@ const animals = [
 //   MATCH_URL_VIDYARD: /vidyard.com\/(?:watch\/)?([a-zA-Z0-9-]+)/,
 // };
 
+const MATCH_URL_ROOM = /((^(http:\/\/)?localhost:3000)|(^(https?:\/\/(www\.)?)?turtletv\.app))\/room\/([-a-zA-Z0-9]*)/;
 const MATCH_URL_NETFLIX = /https?:\/\/(www\.)?netflix\.com\/watch\/([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 
 export const matchUrl = (url: string) => {
@@ -96,6 +97,13 @@ export const matchUrl = (url: string) => {
   } else {
     return 'DEFAULT';
   }
+};
+
+export const matchRoomUrl = (url: string) => {
+  if (url.match(MATCH_URL_ROOM)) {
+    return true;
+  }
+  return false;
 };
 
 export const generateAnonName = (): string => {

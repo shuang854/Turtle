@@ -2,8 +2,8 @@ import { IonCol, IonContent, IonGrid, IonHeader, IonPage, IonRow } from '@ionic/
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router';
 import Frame from '../components/Frame';
-import RoomHeader from '../components/RoomHeader';
 import VideoPlayer from '../components/Player/VideoPlayer';
+import RoomHeader from '../components/RoomHeader';
 import { auth, db, decrement, increment, rtdb } from '../services/firebase';
 import { generateAnonName } from '../services/utilities';
 import './Room.css';
@@ -83,12 +83,13 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
           }
         });
 
-        // Manage user count
+        // Manage user count and maintain room availability
         rtdb.ref('.info/connected').on('value', async (snapshot) => {
           if (snapshot.val() === true) {
             try {
               await roomRef.update({ userCount: increment });
-              await roomRef.onDisconnect().update({ userCount: decrement });
+              roomRef.onDisconnect().update({ userCount: decrement });
+              availableRef.child(roomId).set({ name: 'Room Name', createdAt: new Date().toISOString() });
             } catch (err) {
               console.log(err);
             }

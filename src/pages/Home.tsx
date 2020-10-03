@@ -1,13 +1,29 @@
-import { IonButton, IonContent, IonGrid, IonHeader, IonPage, IonRow, IonTitle, IonToolbar, IonCol } from '@ionic/react';
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonFabButton,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonPage,
+  IonRow,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react';
+import { enterOutline } from 'ionicons/icons';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { auth, db, rtdb, timestamp } from '../services/firebase';
-import { generateAnonName } from '../services/utilities';
+import { generateAnonName, matchRoomUrl } from '../services/utilities';
 import './Home.css';
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState('');
+  const [roomLink, setRoomLink] = useState('');
+  const [valid, setValid] = useState(true);
 
   let history = useHistory();
 
@@ -30,7 +46,7 @@ const Home: React.FC = () => {
     };
   }, []);
 
-  // Populate both Firestore and RealTimeDB before navigating to room
+  // Populate both Firestore and RealTimeDB before navigating to room on create
   const createRoom = async () => {
     // Firestore preparations
     const roomId = await db.collection('rooms').add({
@@ -53,7 +69,25 @@ const Home: React.FC = () => {
     await rtdb.ref('/available/' + roomId.id).set({ name: 'Room Name', createdAt: new Date().toISOString() });
     const path = '/room/' + roomId.id;
 
-    return history.push(path);
+    return history.push(path); // Navigate to room
+  };
+
+  const showError = () => {
+    return <div style={{ color: 'red', fontSize: '14px' }}>Invalid link</div>;
+  };
+
+  // Validate URL and join the room
+  const joinRoom = async () => {
+    if (matchRoomUrl(roomLink)) {
+      const roomId = roomLink.split('/')[roomLink.split('/').length - 1];
+      const doc = await db.collection('rooms').doc(roomId).get();
+      if (doc.exists) {
+        setValid(true);
+        return history.push('/room/' + roomId);
+      }
+    }
+
+    setValid(false);
   };
 
   return (
@@ -86,6 +120,35 @@ const Home: React.FC = () => {
             <IonRow>
               <IonCol size="12" class="share-col">
                 Share the link with friends!
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol size="12">OR</IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol size="12" class="join-col">
+                Join a room:
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol size="12" class="paste-col">
+                <IonToolbar class="paste-toolbar">
+                  <IonInput
+                    onIonChange={(e) => setRoomLink(e.detail.value!)}
+                    placeholder="Paste room link"
+                    class="paste-input"
+                  ></IonInput>
+                  <IonFabButton
+                    slot="end"
+                    size="small"
+                    disabled={roomLink === ''}
+                    onClick={joinRoom}
+                    class="paste-button"
+                  >
+                    <IonIcon icon={enterOutline}></IonIcon>
+                  </IonFabButton>
+                </IonToolbar>
+                {valid ? <></> : showError()}
               </IonCol>
             </IonRow>
           </IonGrid>

@@ -24,15 +24,42 @@ ion-title {
 }
 
 .first-step-col {
-  margin-top: 20%;
-  margin-bottom: 10px;
+  margin-top: 15%;
 }
 
 .create-col {
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 
 .share-col {
-  margin-top: 8px;
+  margin-top: 2px;
   font-size: 20px;
+  margin-bottom: 50px;
+}
+
+.join-col {
+  font-size: 20px;
+}
+
+.paste-col {
+  padding: 0;
+}
+
+.paste-toolbar {
+  max-width: 300px;
+  --background: none;
+  margin: auto;
+}
+
+.paste-input {
+  margin-left: 2px;
+  text-align: left;
+  font-size: 14px;
+  border: 1px solid var(--ion-color-secondary);
+  border-radius: 5px;
+}
+
+.paste-button {
+  margin-right: 2px;
+  --box-shadow: 0 3px 2px -1px rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
