@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { arrayUnion, db } from '../../services/firebase';
 import { SYNC_MARGIN } from '../../services/utilities';
+import GetExtension from './GetExtension';
 
 type SubscriptionFrameProps = {
   roomId: string;
@@ -12,6 +13,33 @@ type SubscriptionFrameProps = {
 const SubscriptionFrame: React.FC<SubscriptionFrameProps> = ({ ownerId, userId, roomId, videoUrl }) => {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [playerReady, setPlayerReady] = useState(false);
+  const [hasExtension, setHasExtension] = useState(false);
+
+  const getExtensionVersion = () => {
+    return new Promise<boolean>((resolve, reject) => {
+      const channel = new MessageChannel();
+      channel.port1.onmessage = ({ data }) => {
+        channel.port1.close();
+        if (data.error) {
+          reject(false);
+        } else {
+          console.log(data.version);
+          resolve(true);
+        }
+      };
+      window.postMessage('get extension version', '*', [channel.port2]);
+    });
+  };
+
+  // Validate browser extension version
+  useEffect(() => {
+    const checkExtension = async () => {
+      const val = await getExtensionVersion();
+      setHasExtension(val);
+    };
+
+    checkExtension();
+  }, []);
 
   // Listen for events from browser extension (owner only)
   useEffect(() => {
@@ -152,7 +180,7 @@ const SubscriptionFrame: React.FC<SubscriptionFrameProps> = ({ ownerId, userId, 
     }
   }, [playerReady, roomId, ownerId, userId]);
 
-  return (
+  return hasExtension ? (
     <iframe
       ref={frameRef}
       src={videoUrl}
@@ -164,6 +192,8 @@ const SubscriptionFrame: React.FC<SubscriptionFrameProps> = ({ ownerId, userId, 
       height="100%"
       width="100%"
     ></iframe>
+  ) : (
+    <GetExtension></GetExtension>
   );
 };
 

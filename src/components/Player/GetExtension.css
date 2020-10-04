@@ -1,0 +1,18 @@
+.extension-content {
+  --background: var(--ion-color-light-shade);
+}
+
+.extension-content * {
+  color: var(--ion-color-primary);
+  font-size: 20px;
+}
+
+.firefox-link {
+  display: inline-block;
+}
+
+.firefox-ext-img {
+  height: 60px;
+  width: 172px;
+  padding-left: 10px;
+}

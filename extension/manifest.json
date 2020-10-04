@@ -11,6 +11,10 @@
       "matches": ["https://www.netflix.com/*"],
       "js": ["player.js"],
       "all_frames": true
+    },
+    {
+      "matches": ["http://localhost/*", "https://turtletv.app/*"],
+      "js": ["check_extension.js"]
     }
   ],
   "web_accessible_resources": ["netflix.js"],
