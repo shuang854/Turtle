@@ -1,5 +1,6 @@
 .create-room {
   width: 50%;
+  --background: var(--ion-color-secondary-shade);
 }
 
 .home-content {
@@ -9,7 +10,7 @@
 .home-grid {
   max-width: 500px;
   font-size: 26px;
-  color: var(--ion-color-primary);
+  color: var(--ion-color-secondary);
   text-align: center;
 }
 

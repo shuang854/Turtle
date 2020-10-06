@@ -12,5 +12,5 @@ ion-segment-button {
 }
 
 ion-fab-button {
-  --background: var(--ion-color-secondary);
+  --background: var(--ion-color-secondary-shade);
 }

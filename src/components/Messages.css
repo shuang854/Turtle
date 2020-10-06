@@ -18,7 +18,7 @@
   border-radius: 5px;
   margin-bottom: 4px;
   max-width: 70%;
-  background: var(--ion-color-secondary);
+  background: var(--ion-color-secondary-shade);
   color: #fff;
 }
 
@@ -27,7 +27,7 @@
   border-radius: 5px;
   margin-bottom: 4px;
   max-width: 70%;
-  background: var(--ion-color-primary);
+  background: var(--ion-color-primary-shade);
   color: #fff;
 }
 
