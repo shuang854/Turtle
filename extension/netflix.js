@@ -36,3 +36,12 @@ window.addEventListener('message', (ev) => {
     }
   }
 });
+
+// Disable keyboard shortcuts
+window.addEventListener(
+  'keydown',
+  (e) => {
+    e.stopPropagation();
+  },
+  true
+);
