@@ -52,7 +52,7 @@ ion-title {
 }
 
 .paste-input {
-  margin-left: 2px;
+  margin-left: 4px;
   text-align: left;
   font-size: 14px;
   border: 1px solid var(--ion-color-secondary);

@@ -36,6 +36,6 @@ chrome.webRequest.onHeadersReceived.addListener(
       responseHeaders: details.responseHeaders.filter((header) => !IFRAME_HEADERS.includes(header.name.toLowerCase())),
     };
   },
-  { urls: ['<all_urls>'] },
+  { urls: ['https://www.netflix.com/*', 'http://localhost/*', 'https://turtletv.app/*'] },
   isFirefox ? ['blocking', 'responseHeaders'] : ['blocking', 'responseHeaders', 'extraHeaders']
 );

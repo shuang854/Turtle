@@ -8,12 +8,11 @@ window.parent.postMessage('video ready', '*');
 player.addEventListener('play', (ev) => {
   window.parent.postMessage({ type: 'play', time: player.currentTime }, '*');
 });
-
 player.addEventListener('pause', (ev) => {
   window.parent.postMessage({ type: 'pause', time: player.currentTime }, '*');
 });
 
-// Subscribe listener for syncing requests
+// Listen for syncing requests
 window.addEventListener('message', (ev) => {
   let type = ev.data.type;
 

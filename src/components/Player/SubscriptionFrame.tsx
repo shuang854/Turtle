@@ -23,7 +23,6 @@ const SubscriptionFrame: React.FC<SubscriptionFrameProps> = ({ ownerId, userId, 
         if (data.error) {
           reject(false);
         } else {
-          console.log(data.version);
           resolve(true);
         }
       };
@@ -87,7 +86,7 @@ const SubscriptionFrame: React.FC<SubscriptionFrameProps> = ({ ownerId, userId, 
     });
   };
 
-  // Subscribe listener for updateState requests from Firebase (owner only)
+  // Listen for updateState requests from Firebase (owner only)
   useEffect(() => {
     if (ownerId === userId) {
       const roomRef = db.collection('rooms').doc(roomId);
@@ -151,7 +150,7 @@ const SubscriptionFrame: React.FC<SubscriptionFrameProps> = ({ ownerId, userId, 
         frameRef.current?.contentWindow?.postMessage({ type: 'playing', playing: isPlaying }, '*');
       };
 
-      // listen to 'states' collection for video state changes from owner
+      // Listen to 'states' collection for video state changes from owner
       const stateUnsubscribe = stateRef.onSnapshot(async (docSnapshot) => {
         const actual = docSnapshot.data();
         if (allowUpdate) {

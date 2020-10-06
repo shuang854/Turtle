@@ -89,7 +89,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
             try {
               await roomRef.update({ userCount: increment });
               roomRef.onDisconnect().update({ userCount: decrement });
-              availableRef.child(roomId).set({ name: 'Room Name', createdAt: new Date().toISOString() });
+              availableRef.set({ name: 'Room Name', createdAt: new Date().toISOString() });
             } catch (err) {
               console.log(err);
             }

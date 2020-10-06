@@ -7,12 +7,18 @@
   font-size: 20px;
 }
 
-.firefox-link {
+.ext-link {
   display: inline-block;
 }
 
 .firefox-ext-img {
   height: 60px;
   width: 172px;
+  padding-left: 10px;
+}
+
+.chrome-ext-img {
+  height: 62px;
+  width: 220px;
   padding-left: 10px;
 }
