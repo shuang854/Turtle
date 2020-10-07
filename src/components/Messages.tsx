@@ -1,14 +1,4 @@
-import {
-  IonCol,
-  IonContent,
-  IonFabButton,
-  IonFooter,
-  IonGrid,
-  IonIcon,
-  IonInput,
-  IonRow,
-  IonToolbar,
-} from '@ionic/react';
+import { IonCol, IonContent, IonFabButton, IonGrid, IonIcon, IonInput, IonRow, IonToolbar } from '@ionic/react';
 import { sendOutline } from 'ionicons/icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { db, rtdb } from '../services/firebase';
@@ -220,22 +210,22 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
           )}
         </IonGrid>
       </IonContent>
-      <IonFooter style={{ display: pane === 'chat' ? null : 'none' }}>
-        <IonToolbar class="message-toolbar">
-          <IonInput
-            onIonChange={(e) => setMessage(e.detail.value!)}
-            onKeyDown={(e) => onEnter(e)}
-            value={message}
-            placeholder="Send message"
-            enterkeyhint="send"
-            autocorrect="on"
-            class="message-input"
-          ></IonInput>
-          <IonFabButton slot="end" size="small" onClick={sendMessage} class="send-button">
-            <IonIcon icon={sendOutline}></IonIcon>
-          </IonFabButton>
-        </IonToolbar>
-      </IonFooter>
+      <IonToolbar class="message-toolbar" style={{ display: pane === 'chat' ? null : 'none' }}>
+        <IonInput
+          onIonChange={(e) => setMessage(e.detail.value!)}
+          onKeyDown={(e) => onEnter(e)}
+          value={message}
+          placeholder="Send message"
+          enterkeyhint="send"
+          autocorrect="on"
+          autocapitalize="on"
+          spellcheck={true}
+          class="message-input"
+        ></IonInput>
+        <IonFabButton slot="end" size="small" onClick={sendMessage} class="send-button">
+          <IonIcon icon={sendOutline}></IonIcon>
+        </IonFabButton>
+      </IonToolbar>
     </>
   );
 };

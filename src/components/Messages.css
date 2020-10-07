@@ -1,6 +1,6 @@
 .message-content {
   overflow-y: auto;
-  height: calc(100% - 160px);
+  height: calc(100% - 162px);
 }
 
 .message-grid {
@@ -45,10 +45,6 @@
 
 .footer-ios ion-toolbar:first-of-type {
   padding-top: 5px;
-}
-
-ion-footer ion-toolbar:last-of-type {
-  padding-bottom: 10px;
 }
 
 .message-input {

@@ -6,6 +6,10 @@
   margin: 0;
 }
 
+.frame-segment {
+  background: none;
+}
+
 ion-segment-button {
   --indicator-transition: transform 100ms cubic-bezier(0.4, 0, 0.2, 1);
   max-height: 40px;
@@ -13,4 +17,5 @@ ion-segment-button {
 
 ion-fab-button {
   --background: var(--ion-color-secondary-shade);
+  --background-activated: var(--ion-color-secondary);
 }

@@ -1,6 +1,8 @@
 .create-room {
   width: 50%;
   --background: var(--ion-color-secondary-shade);
+  --background-activated: var(--ion-color-secondary);
+  --background-focused: var(--ion-color-secondary);
 }
 
 .home-content {

@@ -19,7 +19,7 @@ const Frame: React.FC<FrameProps> = ({ ownerId, roomId, userId, userList, joinTi
 
   return (
     <IonCard class="frame-card">
-      <IonSegment value={pane}>
+      <IonSegment value={pane} class="frame-segment">
         <IonSegmentButton value="chat" onClick={() => setPane('chat')}>
           <IonIcon icon={chatboxOutline}></IonIcon>
         </IonSegmentButton>
