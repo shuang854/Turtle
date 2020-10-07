@@ -16,7 +16,7 @@
 .my-msg {
   padding: 6px;
   border-radius: 5px;
-  margin-bottom: 4px;
+  margin: 2px 0 2px 0;
   max-width: 70%;
   background: var(--ion-color-secondary-shade);
   color: #fff;
@@ -25,10 +25,17 @@
 .other-msg {
   padding: 6px;
   border-radius: 5px;
-  margin-bottom: 4px;
+  margin: 2px 0 2px 0;
   max-width: 70%;
   background: var(--ion-color-primary-shade);
   color: #fff;
+}
+
+.system-msg {
+  margin: auto;
+  color: #999;
+  font-size: 13px;
+  padding: 4px;
 }
 
 .message-toolbar {

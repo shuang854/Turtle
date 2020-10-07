@@ -57,7 +57,7 @@ const Home: React.FC = () => {
     });
     await db.collection('playlists').doc(roomId.id).set({
       createdAt: timestamp,
-      url: 'https://www.youtube.com/watch?v=DGQwd1_dpuc',
+      url: 'https://www.youtube.com/watch?v=SMKPKGW083c',
     });
     await db.collection('states').doc(roomId.id).set({
       isPlaying: false,

@@ -29,6 +29,7 @@ type Message = {
   createdAt: number;
   id: string;
   senderId: string;
+  type: string;
 };
 
 const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, userList, joinTime }) => {
@@ -51,6 +52,7 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
             createdAt: msg.createdAt,
             id: msg.senderId + msg.createdAt,
             senderId: msg.senderId,
+            type: 'chat',
           });
         }
       });
@@ -80,6 +82,7 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
                 createdAt: req.createdAt,
                 id: req.senderId + req.createdAt,
                 senderId: req.senderId,
+                type: 'system',
               });
             }
           }
@@ -164,14 +167,24 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
       .sort((msg1, msg2) => msg1.createdAt - msg2.createdAt)
       .map((msg) => {
         if (getName(msg.senderId) !== undefined) {
-          return (
-            <IonRow key={msg.id} class={msg.senderId === userId ? 'right-align' : ''}>
-              <IonCol size="auto" class={msg.senderId === userId ? 'my-msg' : 'other-msg'}>
-                {getName(msg.senderId) !== '' ? <b>{getName(msg.senderId)}: </b> : <></>}
-                <span>{msg.content}</span>
-              </IonCol>
-            </IonRow>
-          );
+          if (msg.type === 'chat') {
+            return (
+              <IonRow key={msg.id} class={msg.senderId === userId ? 'right-align' : ''}>
+                <IonCol size="auto" class={msg.senderId === userId ? 'my-msg' : 'other-msg'}>
+                  {getName(msg.senderId) !== '' ? <b>{getName(msg.senderId)}: </b> : <></>}
+                  <span>{msg.content}</span>
+                </IonCol>
+              </IonRow>
+            );
+          } else {
+            return (
+              <IonRow key={msg.id}>
+                <IonCol size="auto" class="system-msg">
+                  <span>{getName(msg.senderId) + ' ' + msg.content}</span>
+                </IonCol>
+              </IonRow>
+            );
+          }
         } else {
           return <></>;
         }
@@ -181,7 +194,31 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
   return (
     <>
       <IonContent style={{ display: pane === 'chat' ? null : 'none' }} class="message-content" ref={contentRef}>
-        <IonGrid class="message-grid">{userList.size === 0 ? <span>Loading...</span> : renderMessages()}</IonGrid>
+        <IonGrid class="message-grid">
+          {userList.size === 0 ? (
+            <span>Loading...</span>
+          ) : (
+            <>
+              <IonRow>
+                <IonCol size="auto" class="system-msg">
+                  {ownerId === userId ? (
+                    <span>
+                      Welcome to TurtleTV! You joined the room as the owner, so everyone else in the room will sync up
+                      with your plays/pauses.
+                    </span>
+                  ) : (
+                    <span>
+                      Welcome to TurtleTV! You joined the room as a member, so your plays/pauses will not affect anyone
+                      else in the room.
+                    </span>
+                  )}
+                </IonCol>
+              </IonRow>
+
+              {renderMessages()}
+            </>
+          )}
+        </IonGrid>
       </IonContent>
       <IonFooter style={{ display: pane === 'chat' ? null : 'none' }}>
         <IonToolbar class="message-toolbar">
@@ -191,6 +228,7 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
             value={message}
             placeholder="Send message"
             enterkeyhint="send"
+            autocorrect="on"
             class="message-input"
           ></IonInput>
           <IonFabButton slot="end" size="small" onClick={sendMessage} class="send-button">
