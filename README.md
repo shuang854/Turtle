@@ -2,7 +2,7 @@
 <br />
 <p align="center">
   <a href="https://turtletv.app">
-    <img src="public/assets/extension-icon.png" alt="Turtle" width="80" height="80">
+    <img src="public/assets/icon/extension-icon.png" alt="Turtle" width="80" height="80">
   </a>
 
   <h3 align="center">TurtleTV</h3>
