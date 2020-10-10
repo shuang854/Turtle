@@ -24,7 +24,7 @@ const collection = {
         requests: [
           {
             createdAt: 'timestamp',
-            time: '01:25:44', // Relevant for 'play', 'pause' types
+            data: '01:25:44', // Contents of data depend on type of request
             type: 'updateState',
             senderId: 'userId',
           },

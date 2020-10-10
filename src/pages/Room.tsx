@@ -64,7 +64,7 @@ const Room: React.FC<RouteComponentProps<{ roomId: string }>> = ({ match }) => {
 
         // Keep track of online user presence in realtime database rooms
         roomRef.on('value', async (snapshot) => {
-          // Populate list of users in a room
+          // Populate list of usernames in a room
           const map: Map<string, string> = new Map<string, string>();
           snapshot.forEach((childSnapshot) => {
             if (childSnapshot.key !== null && childSnapshot.key !== 'userCount') {

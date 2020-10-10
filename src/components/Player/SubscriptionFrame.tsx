@@ -58,7 +58,7 @@ const SubscriptionFrame: React.FC<SubscriptionFrameProps> = ({ ownerId, userId, 
           db.collection('rooms')
             .doc(roomId)
             .update({
-              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: e.data.time, type: type }),
+              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: e.data.time, type: type }),
             });
         }
       };
@@ -167,7 +167,7 @@ const SubscriptionFrame: React.FC<SubscriptionFrameProps> = ({ ownerId, userId, 
 
             seekTo(actual?.time);
             roomRef.update({
-              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'updateState' }),
+              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: 0, type: 'updateState' }),
             });
           }
         }

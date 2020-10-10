@@ -66,7 +66,7 @@ const OnlineList: React.FC<OnlineListProps> = ({ pane, roomId, userId, userList 
 
   return (
     <IonContent style={{ display: pane === 'online' ? null : 'none' }} class="online-content">
-      <IonListHeader class="online-header">Online</IonListHeader>
+      <IonListHeader>Online</IonListHeader>
       <IonList class="online-list">
         {Array.from(userList.values()).map((user) => {
           return (
@@ -78,7 +78,7 @@ const OnlineList: React.FC<OnlineListProps> = ({ pane, roomId, userId, userList 
       </IonList>
       <IonRow>
         <IonCol class="clipboard-col">
-          <IonListHeader class="online-header">Invite friends!</IonListHeader>
+          <IonListHeader>Invite friends!</IonListHeader>
           <IonToolbar class="clipboard-toolbar">
             <IonInput readonly value={window.location.href} ref={inputRef} class="clipboard-input"></IonInput>
             <IonFabButton slot="end" size="small" onClick={copyLink} class="send-button">

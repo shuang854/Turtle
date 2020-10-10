@@ -1,6 +1,24 @@
+.settings-header {
+  text-align: left;
+}
+
+.name-item {
+  font-size: 14px;
+  color: var(--ion-color-secondary);
+}
+
+.name-input {
+  color: #fff;
+}
+
+.error-message {
+  padding-top: 4px;
+  padding-left: 16px;
+  color: #e61a61;
+}
+
 .about-grid {
-  margin-top: 50px;
-  max-width: 500px;
+  margin-top: 20px;
   font-size: 20px;
   font-style: bold;
   color: var(--ion-color-secondary);

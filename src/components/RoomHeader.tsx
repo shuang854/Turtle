@@ -25,7 +25,7 @@ const RoomHeader: React.FC<RoomHeaderProps> = ({ roomId, userId, ownerId }) => {
         .collection('rooms')
         .doc(roomId)
         .update({
-          requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'change' }),
+          requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: 0, type: 'change' }),
         });
 
       setVideoUrl('');

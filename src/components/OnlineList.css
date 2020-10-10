@@ -2,13 +2,6 @@
   height: calc(100% - 162px + 52px);
 }
 
-.online-header {
-  border-bottom: 1px solid var(--ion-color-primary);
-  color: var(--ion-color-primary);
-  font-size: 20px;
-  align-items: center;
-}
-
 .online-list {
   padding-top: 0;
   padding-bottom: 0;

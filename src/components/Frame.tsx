@@ -1,10 +1,10 @@
 import { IonCard, IonIcon, IonSegment, IonSegmentButton } from '@ionic/react';
 import { chatboxOutline, informationCircleOutline, peopleOutline } from 'ionicons/icons';
 import React, { useState } from 'react';
-import About from './About';
 import './Frame.css';
 import Messages from './Messages';
 import OnlineList from './OnlineList';
+import Settings from './Settings';
 
 type FrameProps = {
   ownerId: string;
@@ -26,7 +26,7 @@ const Frame: React.FC<FrameProps> = ({ ownerId, roomId, userId, userList, joinTi
         <IonSegmentButton value="online" onClick={() => setPane('online')}>
           <IonIcon icon={peopleOutline}></IonIcon>
         </IonSegmentButton>
-        <IonSegmentButton value="about" onClick={() => setPane('about')}>
+        <IonSegmentButton value="settings" onClick={() => setPane('settings')}>
           <IonIcon icon={informationCircleOutline}></IonIcon>
         </IonSegmentButton>
       </IonSegment>
@@ -40,7 +40,7 @@ const Frame: React.FC<FrameProps> = ({ ownerId, roomId, userId, userList, joinTi
         joinTime={joinTime}
       ></Messages>
       <OnlineList pane={pane} roomId={roomId} userId={userId} userList={userList}></OnlineList>
-      <About pane={pane}></About>
+      <Settings pane={pane} roomId={roomId} userId={userId}></Settings>
     </IonCard>
   );
 };

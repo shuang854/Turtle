@@ -68,11 +68,11 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
           for (const req of requests) {
             if (req.createdAt > joinTime && req.type !== 'updateState') {
               arr.push({
-                content: processType(req.type, req.time),
+                content: processType(req.type, req.data),
                 createdAt: req.createdAt,
                 id: req.senderId + req.createdAt,
                 senderId: req.senderId,
-                type: 'system',
+                type: req.type,
               });
             }
           }
@@ -86,16 +86,18 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
   }, [roomId, joinTime]);
 
   // Convert request type to message content
-  const processType = (type: string, time: number): string => {
+  const processType = (type: string, data: any): string => {
     switch (type) {
       case 'change':
         return 'changed the video.';
       case 'join':
         return 'joined the room.';
       case 'pause':
-        return 'paused the video at ' + secondsToTimestamp(time);
+        return 'paused the video at ' + secondsToTimestamp(data);
       case 'play':
-        return 'played the video from ' + secondsToTimestamp(time);
+        return 'played the video from ' + secondsToTimestamp(data);
+      case 'nameChange':
+        return data.prev + ' changed their name to ' + data.curr;
       default:
         return '';
     }
@@ -170,7 +172,7 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
             return (
               <IonRow key={msg.id}>
                 <IonCol size="auto" class="system-msg">
-                  <span>{getName(msg.senderId) + ' ' + msg.content}</span>
+                  <span>{msg.type === 'nameChange' ? msg.content : getName(msg.senderId) + ' ' + msg.content}</span>
                 </IonCol>
               </IonRow>
             );

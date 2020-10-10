@@ -41,6 +41,7 @@
 .message-toolbar {
   padding-left: 5px;
   --background: var(--ion-color-light);
+  border-top: 1px solid #777;
 }
 
 .footer-ios ion-toolbar:first-of-type {

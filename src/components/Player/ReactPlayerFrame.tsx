@@ -28,7 +28,7 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
         db.collection('rooms')
           .doc(roomId)
           .update({
-            requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: currTime, type: 'play' }),
+            requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: currTime, type: 'play' }),
           });
       }
     }
@@ -48,7 +48,7 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
         db.collection('rooms')
           .doc(roomId)
           .update({
-            requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: currTime, type: 'pause' }),
+            requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: currTime, type: 'pause' }),
           });
       }
     }
@@ -88,7 +88,7 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
       db.collection('rooms')
         .doc(roomId)
         .update({
-          requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'updateState' }),
+          requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: 0, type: 'updateState' }),
         });
     }
   };
@@ -119,7 +119,7 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
 
             player.current?.seekTo(realTimeState);
             roomRef.update({
-              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, time: 0, type: 'updateState' }),
+              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: 0, type: 'updateState' }),
             });
           }
         }

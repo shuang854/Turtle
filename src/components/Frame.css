@@ -19,3 +19,10 @@ ion-fab-button {
   --background: var(--ion-color-secondary-shade);
   --background-activated: var(--ion-color-secondary);
 }
+
+ion-list-header {
+  color: var(--ion-color-primary);
+  font-size: 20px;
+  border-bottom: 1px solid
+    var(--ion-item-border-color, var(--ion-border-color, var(--ion-color-step-150, rgba(0, 0, 0, 0.13))));
+}
