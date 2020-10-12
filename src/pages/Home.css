@@ -5,12 +5,30 @@
   --background-focused: var(--ion-color-secondary);
 }
 
+.intro-col {
+  color: var(--ion-color-primary);
+}
+
+.intro-header {
+  font-size: 36px;
+  margin-top: 40px;
+}
+
+.support-col {
+  margin-top: 30px;
+}
+
+.request-col {
+  margin-top: 30px;
+}
+
 .home-content {
   --background: var(--ion-color-light-shade);
 }
 
 .home-grid {
-  max-width: 500px;
+  font-family: 'custom-head';
+  max-width: 800px;
   font-size: 26px;
   color: var(--ion-color-secondary);
   text-align: center;
@@ -27,7 +45,7 @@ ion-title {
 }
 
 .first-step-col {
-  margin-top: 15%;
+  margin-top: 30px;
 }
 
 .create-col {
@@ -46,6 +64,7 @@ ion-title {
 
 .paste-col {
   padding: 0;
+  margin-bottom: 50px;
 }
 
 .paste-toolbar {

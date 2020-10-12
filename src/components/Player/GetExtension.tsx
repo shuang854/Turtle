@@ -8,7 +8,11 @@ const GetExtension: React.FC = () => {
   return (
     <IonContent class="extension-content">
       <IonListHeader>Browser extension installation is required.</IonListHeader>
-      <IonRouterLink href="https://chrome.google.com/webstore/search/TurtleTv" target="_blank" class="ext-link">
+      <IonRouterLink
+        href="https://chrome.google.com/webstore/detail/turtle/impnlaffkhninicciominkpmacjebogd"
+        target="_blank"
+        class="ext-link"
+      >
         <IonImg src={chrome} alt="Get the extension for Chrome" class="chrome-ext-img"></IonImg>
       </IonRouterLink>
       <IonRouterLink href="https://addons.mozilla.org/en-US/firefox/addon/turtletv/" target="_blank" class="ext-link">

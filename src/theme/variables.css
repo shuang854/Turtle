@@ -158,10 +158,10 @@ http://ionicframework.com/docs/theming/ */
 }
 
 @font-face {
-  font-family: 'custom';
+  font-family: 'custom-head';
   font-style: normal;
-  font-weight: bold;
-  src: url('../assets/OpenSans-SemiBold.ttf');
+  font-weight: normal;
+  src: url('../assets/Quicksand-VariableFont_wght.ttf');
 }
 
 @font-face {

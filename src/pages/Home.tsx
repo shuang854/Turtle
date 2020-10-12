@@ -103,52 +103,69 @@ const Home: React.FC = () => {
         ) : (
           <IonGrid class="home-grid">
             <IonRow>
-              <IonCol size="12" class="first-step-col">
-                Step 1:
+              <IonCol size="12" sizeLg="6" class="intro-col">
+                <IonRow>
+                  <IonCol class="intro-header">Watch videos online with friends!</IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol class="support-col">-- YouTube -- Netflix -- Facebook Watch -- Vimeo -- Streamable</IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol class="request-col">
+                    <a href="https://discord.gg/NEw3Msu" target="_blank">
+                      Request more options
+                    </a>
+                  </IonCol>
+                </IonRow>
               </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size="12" class="create-col">
-                <IonButton onClick={createRoom} class="create-room">
-                  Create Room
-                </IonButton>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size="12">Step 2:</IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size="12" class="share-col">
-                Share the link with friends!
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size="12">OR</IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size="12" class="join-col">
-                Join a room:
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size="12" class="paste-col">
-                <IonToolbar class="paste-toolbar">
-                  <IonInput
-                    onIonChange={(e) => setRoomLink(e.detail.value!)}
-                    placeholder="Paste room link"
-                    class="paste-input"
-                  ></IonInput>
-                  <IonFabButton
-                    slot="end"
-                    size="small"
-                    disabled={roomLink === ''}
-                    onClick={joinRoom}
-                    class="paste-button"
-                  >
-                    <IonIcon icon={enterOutline}></IonIcon>
-                  </IonFabButton>
-                </IonToolbar>
-                {valid ? <></> : showError()}
+              <IonCol size="12" sizeLg="6">
+                <IonRow>
+                  <IonCol class="first-step-col">Step 1:</IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol size="12" class="create-col">
+                    <IonButton onClick={createRoom} class="create-room">
+                      Create Room
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol size="12">Step 2:</IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol size="12" class="share-col">
+                    Share the link.
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol size="12">OR</IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol size="12" class="join-col">
+                    Join a room:
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol size="12" class="paste-col">
+                    <IonToolbar class="paste-toolbar">
+                      <IonInput
+                        onIonChange={(e) => setRoomLink(e.detail.value!)}
+                        placeholder="Paste room link"
+                        class="paste-input"
+                      ></IonInput>
+                      <IonFabButton
+                        slot="end"
+                        size="small"
+                        disabled={roomLink === ''}
+                        onClick={joinRoom}
+                        class="paste-button"
+                      >
+                        <IonIcon icon={enterOutline}></IonIcon>
+                      </IonFabButton>
+                    </IonToolbar>
+                    {valid ? <></> : showError()}
+                  </IonCol>
+                </IonRow>
               </IonCol>
             </IonRow>
           </IonGrid>

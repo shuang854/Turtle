@@ -1,5 +1,5 @@
 import { IonCard, IonIcon, IonSegment, IonSegmentButton } from '@ionic/react';
-import { chatboxOutline, informationCircleOutline, peopleOutline } from 'ionicons/icons';
+import { chatboxOutline, cogOutline, peopleOutline } from 'ionicons/icons';
 import React, { useState } from 'react';
 import './Frame.css';
 import Messages from './Messages';
@@ -27,7 +27,7 @@ const Frame: React.FC<FrameProps> = ({ ownerId, roomId, userId, userList, joinTi
           <IonIcon icon={peopleOutline}></IonIcon>
         </IonSegmentButton>
         <IonSegmentButton value="settings" onClick={() => setPane('settings')}>
-          <IonIcon icon={informationCircleOutline}></IonIcon>
+          <IonIcon icon={cogOutline}></IonIcon>
         </IonSegmentButton>
       </IonSegment>
 
