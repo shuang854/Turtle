@@ -17,7 +17,7 @@ import {
 import { logoGithub } from 'ionicons/icons';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { arrayUnion, db, rtdb } from '../services/firebase';
+import { db, rtdb } from '../services/firebase';
 import './Settings.css';
 
 type SettingsProps = {
@@ -42,16 +42,9 @@ const Settings: React.FC<SettingsProps> = ({ pane, roomId, userId }) => {
       rtdb.ref('/rooms/' + roomId + '/' + userId).set({ name: newName });
 
       // Send 'nameChange' request for all clients to get a message about the name change
-      db.collection('rooms')
-        .doc(roomId)
-        .update({
-          requests: arrayUnion({
-            createdAt: Date.now(),
-            senderId: userId,
-            data: { prev: prevName, curr: newName },
-            type: 'nameChange',
-          }),
-        });
+      rtdb
+        .ref('/requests/' + roomId)
+        .push({ createdAt: Date.now(), senderId: userId, data: { prev: prevName, curr: newName }, type: 'nameChange' });
 
       setShowNameChange(true);
     }
@@ -103,12 +96,12 @@ const Settings: React.FC<SettingsProps> = ({ pane, roomId, userId }) => {
         <IonRow class="externals-row">
           <IonCol size="3"></IonCol>
           <IonCol size="3">
-            <IonRouterLink href="https://github.com/shuang854/Turtle" target="_blank">
+            <IonRouterLink href="https://github.com/shuang854/Turtle" target="_blank" rel="noopener noreferrer">
               <IonIcon icon={logoGithub} class="about-icons"></IonIcon>
             </IonRouterLink>
           </IonCol>
           <IonCol size="3">
-            <IonRouterLink href="https://discord.gg/NEw3Msu" target="_blank">
+            <IonRouterLink href="https://discord.gg/NEw3Msu" target="_blank" rel="noopener noreferrer">
               <Icon icon={discordIcon} className="about-icons"></Icon>
             </IonRouterLink>
           </IonCol>

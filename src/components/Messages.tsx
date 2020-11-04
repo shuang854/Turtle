@@ -1,7 +1,7 @@
 import { IonCol, IonContent, IonFabButton, IonGrid, IonIcon, IonInput, IonRow, IonToolbar } from '@ionic/react';
 import { sendOutline } from 'ionicons/icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { db, rtdb } from '../services/firebase';
+import { rtdb } from '../services/firebase';
 import { secondsToTimestamp } from '../services/utilities';
 import './Messages.css';
 
@@ -56,32 +56,24 @@ const Messages: React.FC<MessagesProps> = ({ pane, ownerId, roomId, userId, user
 
   // Listen for new system messages
   useEffect(() => {
-    const roomUnsubscribe = db
-      .collection('rooms')
-      .doc(roomId)
-      .onSnapshot((docSnapshot) => {
-        const docData = docSnapshot.data();
-        if (docData !== undefined) {
-          const requests = docData.requests;
-
-          let arr: Message[] = [];
-          for (const req of requests) {
-            if (req.createdAt > joinTime && req.type !== 'updateState') {
-              arr.push({
-                content: processType(req.type, req.data),
-                createdAt: req.createdAt,
-                id: req.senderId + req.createdAt,
-                senderId: req.senderId,
-                type: req.type,
-              });
-            }
-          }
-          setSystemMessages(arr);
-        }
-      });
+    let arr: Message[] = [];
+    rtdb.ref('/requests/' + roomId).on('child_added', (snapshot) => {
+      const req = snapshot.val();
+      if (req.createdAt > joinTime && req.type !== 'updateState') {
+        arr.push({
+          content: processType(req.type, req.data),
+          createdAt: req.createdAt,
+          id: req.senderId + req.createdAt,
+          senderId: req.senderId,
+          type: req.type,
+        });
+        let copyArr = [...arr];
+        setSystemMessages(copyArr);
+      }
+    });
 
     return () => {
-      roomUnsubscribe();
+      rtdb.ref('/requests/' + roomId).off('child_added');
     };
   }, [roomId, joinTime]);
 

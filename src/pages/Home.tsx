@@ -52,8 +52,6 @@ const Home: React.FC = () => {
     const roomId = await db.collection('rooms').add({
       createdAt: timestamp,
       ownerId: userId,
-      requests: [],
-      state: { time: 0, isPlaying: false },
     });
     await db.collection('playlists').doc(roomId.id).set({
       createdAt: timestamp,
@@ -112,7 +110,7 @@ const Home: React.FC = () => {
                 </IonRow>
                 <IonRow>
                   <IonCol class="request-col">
-                    <a href="https://discord.gg/NEw3Msu" target="_blank">
+                    <a href="https://discord.gg/NEw3Msu" target="_blank" rel="noopener noreferrer">
                       Request more options
                     </a>
                   </IonCol>

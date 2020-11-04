@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { arrayUnion, db } from '../../services/firebase';
+import { db, rtdb } from '../../services/firebase';
 import { SYNC_MARGIN } from '../../services/utilities';
 
 type ReactPlayerFrameProps = {
@@ -25,11 +25,7 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
           time: currTime,
         });
 
-        db.collection('rooms')
-          .doc(roomId)
-          .update({
-            requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: currTime, type: 'play' }),
-          });
+        rtdb.ref('/requests/' + roomId).push({ createdAt: Date.now(), senderId: userId, data: currTime, type: 'play' });
       }
     }
   };
@@ -45,11 +41,9 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
           time: currTime,
         });
 
-        db.collection('rooms')
-          .doc(roomId)
-          .update({
-            requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: currTime, type: 'pause' }),
-          });
+        rtdb
+          .ref('/requests/' + roomId)
+          .push({ createdAt: Date.now(), senderId: userId, data: currTime, type: 'pause' });
       }
     }
   };
@@ -57,14 +51,12 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
   // Listen for requests from Firebase (owner only)
   useEffect(() => {
     if (ownerId === userId) {
-      const roomRef = db.collection('rooms').doc(roomId);
       const stateRef = db.collection('states').doc(roomId);
+      const requestRef = rtdb.ref('/requests/' + roomId);
 
       // Add a listener to 'rooms' collection, listening for updateState requests
-      const roomUnsubscribe = roomRef.onSnapshot((docSnapshot) => {
-        const requests = docSnapshot.data()?.requests;
-        const req = requests[requests.length - 1];
-
+      requestRef.limitToLast(1).on('child_added', (snapshot) => {
+        const req = snapshot.val();
         if (!!req && req.type === 'updateState' && req.senderId !== userId) {
           const currTime = player.current?.getCurrentTime();
           if (currTime !== undefined) {
@@ -77,7 +69,7 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
       });
 
       return () => {
-        roomUnsubscribe();
+        requestRef.limitToLast(1).off('child_added');
       };
     }
   }, [ownerId, roomId, userId]);
@@ -85,11 +77,7 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
   // Request an update after buffering is finished (member only)
   const onBufferEnd = () => {
     if (ownerId !== userId) {
-      db.collection('rooms')
-        .doc(roomId)
-        .update({
-          requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: 0, type: 'updateState' }),
-        });
+      rtdb.ref('/requests/' + roomId).push({ createdAt: Date.now(), senderId: userId, data: 0, type: 'updateState' });
     }
   };
 
@@ -97,7 +85,7 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
   useEffect(() => {
     if (ownerId !== userId) {
       const stateRef = db.collection('states').doc(roomId);
-      const roomRef = db.collection('rooms').doc(roomId);
+      const requestRef = rtdb.ref('/requests/' + roomId);
       let allowUpdate = true;
 
       // listen to 'states' collection for video state changes from owner
@@ -118,9 +106,7 @@ const ReactPlayerFrame: React.FC<ReactPlayerFrameProps> = ({ ownerId, userId, ro
             }, 5000);
 
             player.current?.seekTo(realTimeState);
-            roomRef.update({
-              requests: arrayUnion({ createdAt: Date.now(), senderId: userId, data: 0, type: 'updateState' }),
-            });
+            requestRef.push({ createdAt: Date.now(), senderId: userId, data: 0, type: 'updateState' });
           }
         }
       });

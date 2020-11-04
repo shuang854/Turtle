@@ -21,14 +21,6 @@ const collection = {
       roomId: {
         createdAt: 'timestamp',
         ownerId: 'userId',
-        requests: [
-          {
-            createdAt: 'timestamp',
-            data: '01:25:44', // Contents of data depend on type of request
-            type: 'updateState',
-            senderId: 'userId',
-          },
-        ],
       },
     },
   ],
@@ -65,6 +57,18 @@ const turtle = {
         content: 'Message content',
         senderId: 'userId',
         createdAt: 'timestamp',
+      },
+    },
+  },
+
+  // Keeping state requests in Realtime DB could also lower cost
+  requests: {
+    roomId: {
+      requestId: {
+        createdAt: '2020-10-31T00:12:14.234Z',
+        data: '01:25:44', // Contents of data depend on type of request
+        type: 'updateState',
+        senderId: 'userId',
       },
     },
   },
