@@ -112,7 +112,7 @@ const Home: React.FC = () => {
                 </IonRow>
                 <IonRow>
                   <IonCol class="request-col">
-                    <a href="https://discord.gg/NEw3Msu" target="_blank">
+                    <a href="https://discord.gg/NEw3Msu" target="_blank" rel="noopener noreferrer">
                       Request more options
                     </a>
                   </IonCol>
@@ -148,18 +148,8 @@ const Home: React.FC = () => {
                 <IonRow>
                   <IonCol size="12" class="paste-col">
                     <IonToolbar class="paste-toolbar">
-                      <IonInput
-                        onIonChange={(e) => setRoomLink(e.detail.value!)}
-                        placeholder="Paste room link"
-                        class="paste-input"
-                      ></IonInput>
-                      <IonFabButton
-                        slot="end"
-                        size="small"
-                        disabled={roomLink === ''}
-                        onClick={joinRoom}
-                        class="paste-button"
-                      >
+                      <IonInput onIonChange={(e) => setRoomLink(e.detail.value!)} placeholder="Paste room link" class="paste-input"></IonInput>
+                      <IonFabButton slot="end" size="small" disabled={roomLink === ''} onClick={joinRoom} class="paste-button">
                         <IonIcon icon={enterOutline}></IonIcon>
                       </IonFabButton>
                     </IonToolbar>

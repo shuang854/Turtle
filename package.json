@@ -1,5 +1,5 @@
 {
-  "name": "Turtle",
+  "name": "turtle",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -14,7 +14,7 @@
     "@testing-library/user-event": "^8.0.3",
     "@types/jest": "^24.0.25",
     "@types/node": "^12.12.24",
-    "@types/react": "^16.9.17",
+    "@types/react": "^18.0.25",
     "@types/react-dom": "^16.9.4",
     "@types/react-router": "^5.1.4",
     "@types/react-router-dom": "^5.1.3",
@@ -22,15 +22,15 @@
     "firebase": "^7.17.1",
     "firebase-functions": "^3.11.0",
     "ionicons": "^5.0.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^8.0.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-hook-form": "^6.9.2",
-    "react-player": "^2.6.0",
+    "react-player": "^2.11.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
-    "typescript": "3.8.3"
+    "typescript": "^4.9.3"
   },
   "scripts": {
     "start": "react-scripts start",
